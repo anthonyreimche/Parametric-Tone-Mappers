@@ -100,7 +100,7 @@ function lerpHue(original: number, processed: number, mix: number): number {
   return h - Math.floor(h);
 }
 
-function toneMap(r: Vec3, u: AgxUniforms): Vec3 {
+function toneMap(r: Vec3, u: AgxUniforms, lumaY: readonly number[]): Vec3 {
   const [blackEv, rangeEv, gamma, tuned] = u.agxRange;
   const [restore, mix] = u.agxHue;
   const hBefore = restore > 0.5 ? toHsv(r)[0] : 0;
@@ -114,7 +114,7 @@ function toneMap(r: Vec3, u: AgxUniforms): Vec3 {
       return v > 0 ? Math.pow(v, power) : v;
     };
     const powered: Vec3 = [look(t[0]), look(t[1]), look(t[2])];
-    const luma = u.agxLumaY[0] * powered[0] + u.agxLumaY[1] * powered[1] + u.agxLumaY[2] * powered[2];
+    const luma = lumaY[0] * powered[0] + lumaY[1] * powered[1] + lumaY[2] * powered[2];
     t = [luma + sat * (powered[0] - luma), luma + sat * (powered[1] - luma), luma + sat * (powered[2] - luma)];
   }
   t = [Math.pow(Math.max(0, t[0]), gamma), Math.pow(Math.max(0, t[1]), gamma), Math.pow(Math.max(0, t[2]), gamma)];
@@ -126,9 +126,13 @@ function toneMap(r: Vec3, u: AgxUniforms): Vec3 {
 }
 
 /** One pixel through AgX: Safelight's linear Rec.709 in, display-linear
- *  Rec.709 out (signed where the colour leaves sRGB), before encoding. */
-export function agxPixel(lin: Vec3, u: AgxUniforms): Vec3 {
-  const base = compressNegatives(apply(fromColumnMajor(u.agxPipeToBase), sanitise(lin)), GAMUT_K);
-  const rendering = apply(fromColumnMajor(u.agxBaseToRendering), base);
-  return apply(fromColumnMajor(u.agxRenderingToPipe), toneMap(rendering, u));
+ *  Rec.709 out (signed where the colour leaves sRGB), before encoding. The
+ *  photo's process version picks the matrices, as SL_PROCESS_VERSION does in
+ *  the GLSL; without one it is version 1. */
+export function agxPixel(lin: Vec3, u: AgxUniforms, processVersion?: number): Vec3 {
+  const v2 = (processVersion ?? 1) >= 2;
+  const base = compressNegatives(apply(fromColumnMajor(v2 ? u.agxPipeToBase : u.agxPipeToBaseV1), sanitise(lin)), GAMUT_K);
+  const rendering = apply(fromColumnMajor(v2 ? u.agxBaseToRendering : u.agxBaseToRenderingV1), base);
+  const r = toneMap(rendering, u, v2 ? u.agxLumaY : u.agxLumaYV1);
+  return apply(fromColumnMajor(v2 ? u.agxRenderingToPipe : u.agxRenderingToPipeV1), r);
 }

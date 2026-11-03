@@ -306,7 +306,7 @@ function Body<T extends ParamTable>({ ui, processVersion }: BodyProps<T>): React
         );
       case "select": {
         const v = p[c.key] as number;
-        // base_primaries 0 (export profile) isn't offered; it renders as Rec2020.
+        // base_primaries 0 (export profile) isn't offered; it renders in the working space.
         const offered = c.options.some(([o]) => o === v) ? v : c.options[1][0];
         return h(kit.Select, {
           key: c.key,

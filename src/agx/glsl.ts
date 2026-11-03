@@ -26,9 +26,20 @@ import { ENCODE_GLSL, SANITISE_GLSL, compressGlsl } from "../glsl/common";
 
 // The uniform names are AGX_UNIFORM_TYPES's keys; the host namespaces them and
 // these helpers, so they can't collide with the core's or another transform's.
+// agxV2 is false where SL_PROCESS_VERSION is undefined (builds before Safelight
+// 3.2.0, where #if on it wouldn't compile): those draw every photo as version 1.
 export const AGX_HELPERS = `${SANITISE_GLSL}
 ${ENCODE_GLSL}
 ${compressGlsl("agxCompress", [0.2658180370250449, 0.59846986045365, 0.1357121025213052])}
+bool agxV2() {
+  bool v2 = false;
+#ifdef SL_PROCESS_VERSION
+#if SL_PROCESS_VERSION >= 2
+  v2 = true;
+#endif
+#endif
+  return v2;
+}
 float agxSigmoid(float u, float p) {
   return u / pow(1.0 + pow(u, p), 1.0 / p);
 }
@@ -94,7 +105,7 @@ vec3 agxToneMap(vec3 r) {
       v.r > 0.0 ? pow(v.r, agxLook.z) : v.r,
       v.g > 0.0 ? pow(v.g, agxLook.z) : v.g,
       v.b > 0.0 ? pow(v.b, agxLook.z) : v.b);
-    float luma = dot(agxLumaY, t);
+    float luma = dot(agxV2() ? agxLumaY : agxLumaYV1, t);
     t = luma + agxLook.w * (t - luma);
   }
   t = pow(max(t, vec3(0.0)), vec3(agxRange.z));
@@ -109,7 +120,8 @@ vec3 agxToneMap(vec3 r) {
 }`;
 
 export const AGX_GLSL = `vec3 pipelineToDisplay(vec3 lin) {
-  vec3 base = agxCompress(agxPipeToBase * ptmSanitise(lin));
-  vec3 r = agxToneMap(agxBaseToRendering * base);
-  return ptmEncode(agxRenderingToPipe * r);
+  bool v2 = agxV2();
+  vec3 base = agxCompress((v2 ? agxPipeToBase : agxPipeToBaseV1) * ptmSanitise(lin));
+  vec3 r = agxToneMap((v2 ? agxBaseToRendering : agxBaseToRenderingV1) * base);
+  return ptmEncode((v2 ? agxRenderingToPipe : agxRenderingToPipeV1) * r);
 }`;

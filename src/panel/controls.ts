@@ -83,12 +83,12 @@ function primaryRows(stage: "before" | "after", when?: (p: AgxParams) => boolean
         ]
       : [
           agxSlider(`${c}_outset`, `${cap(c)} purity boost`, `Restore the purity of ${c}, mostly in midtones and shadows`, 0, 99, 0.1, "%", PCT, when, 0),
-          agxSlider(`${c}_unrotation`, `${cap(c)} reverse rotation`, `Reverse the color shift in ${c}s`, -30, 30, 0.1, "°", DEG, when, 0),
+          agxSlider(`${c}_unrotation`, `${cap(c)} reverse rotation`, `Reverse the colour shift in ${c}s`, -30, 30, 0.1, "°", DEG, when, 0),
         ],
   );
 }
 
-// 0 ("export profile") is left out on purpose: it renders as Rec2020. The
+// 0 ("export profile") is left out on purpose: it renders in the working space. The
 // panel's fallback for a stored 0 shows options[1], so Rec2020 must stay at
 // index 1.
 const BASE_PRIMARY_OPTIONS = [1, 2, 3, 4, 5].map((v) => [v, cap(AGX_BASE_PRIMARIES[v])] as const);
@@ -107,8 +107,8 @@ export const AGX_TABS: readonly TabSpec<AgxParams>[] = [
       {
         title: "Input exposure range",
         controls: [
-          agxSlider("range_white_relative_ev", "White relative exposure", "Relative exposure above mid-gray (white point)", 1, 10, 0.01, "EV"),
-          agxSlider("range_black_relative_ev", "Black relative exposure", "Relative exposure below mid-gray (black point)", -20, -1, 0.01, "EV"),
+          agxSlider("range_white_relative_ev", "White relative exposure", "Relative exposure above mid-grey (white point)", 1, 10, 0.01, "EV"),
+          agxSlider("range_black_relative_ev", "Black relative exposure", "Relative exposure below mid-grey (black point)", -20, -1, 0.01, "EV"),
           agxSlider(
             "dynamic_range_scaling",
             "Dynamic range scaling",
@@ -124,7 +124,7 @@ export const AGX_TABS: readonly TabSpec<AgxParams>[] = [
       {
         title: "Basic curve parameters",
         controls: [
-          { kind: "pivot", label: "Pivot relative exposure", tooltip: "Set the pivot's input exposure in EV relative to mid-gray" },
+          { kind: "pivot", label: "Pivot relative exposure", tooltip: "Set the pivot's input exposure in EV relative to mid-grey" },
           agxSlider("curve_pivot_y_linear_output", "Pivot target output", "Darken or brighten the pivot (linear output power)", 0, 100, 0.1, "%", PCT),
           agxSlider("curve_contrast_around_pivot", "Contrast", "Slope of the linear section around the pivot", 0.1, 5, 0.01),
           agxSlider(
@@ -180,7 +180,7 @@ export const AGX_TABS: readonly TabSpec<AgxParams>[] = [
   {
     value: "primaries",
     label: "Primaries",
-    tooltip: "Color primaries adjustments",
+    tooltip: "Colour primaries adjustments",
     sections: [
       {
         title: "Base",
@@ -189,8 +189,8 @@ export const AGX_TABS: readonly TabSpec<AgxParams>[] = [
             kind: "select",
             key: "base_primaries",
             label: "Base primaries",
-            // ours: the second sentence, as Safelight's working profile is Rec2020
-            tooltip: "Color space primaries to use as the base for below adjustments. Working profile is Rec2020 here.",
+            // ours: the second sentence, as Safelight's working space is linear Rec.709 (Rec.2020 on version 1 edits)
+            tooltip: "Colour space primaries to use as the base for below adjustments. Follows the working space, linear Rec.709 (Rec.2020 on older version 1 edits).",
             options: BASE_PRIMARY_OPTIONS,
           },
           {
@@ -241,20 +241,20 @@ export const FILMIC_TABS: readonly TabSpec<FilmicParams>[] = [
         controls: [
           filmicSlider(
             "grey_point_source",
-            "Middle gray luminance",
+            "Middle grey luminance",
             "Adjust to match the average luminance of the image's subject. the value entered here will then be remapped to 18.45%. decrease the value to increase the overall brightness.",
             0.1, 36, 0.01, "%", 1, customGrey,
           ),
           filmicSlider(
             "white_point_source",
             "White relative exposure",
-            "Number of stops between middle gray and pure white. this is a reading a lightmeter would give you on the scene. adjust so highlights clipping is avoided",
+            "Number of stops between middle grey and pure white. this is a reading a lightmeter would give you on the scene. adjust so highlights clipping is avoided",
             2, 8, 0.01, "EV",
           ),
           filmicSlider(
             "black_point_source",
             "Black relative exposure",
-            "Number of stops between middle gray and pure black. this is a reading a lightmeter would give you on the scene. increase to get more contrast. decrease to recover more details in low-lights.",
+            "Number of stops between middle grey and pure black. this is a reading a lightmeter would give you on the scene. increase to get more contrast. decrease to recover more details in low-lights.",
             -14, -3, 0.01, "EV",
           ),
           filmicSlider(
@@ -277,9 +277,9 @@ export const FILMIC_TABS: readonly TabSpec<FilmicParams>[] = [
           {
             kind: "toggle",
             key: "custom_grey",
-            label: "Use custom middle-gray values",
+            label: "Use custom middle-grey values",
             // ours: upstream's text names a darktable/Ansel control Safelight doesn't have
-            tooltip: "Enable to input custom middle-gray values. this is not recommended in general. fix the global exposure with the Exposure slider instead. disable to use standard 18.45 % middle gray.",
+            tooltip: "Enable to input custom middle-grey values. this is not recommended in general. fix the global exposure with the Exposure slider instead. disable to use standard 18.45 % middle grey.",
           },
         ],
       },
@@ -304,7 +304,7 @@ export const FILMIC_TABS: readonly TabSpec<FilmicParams>[] = [
             kind: "direct",
             side: "shoulder",
             label: "Highlights",
-            tooltip: "Distance between middle gray and the start of the highlights roll-off. 0% keeps the shoulder at middle gray, 100% pushes it to the point where the current slope would hit the output white level.",
+            tooltip: "Distance between middle grey and the start of the highlights roll-off. 0% keeps the shoulder at middle grey, 100% pushes it to the point where the current slope would hit the output white level.",
             min: 0.1,
             max: 90,
             reset: 10,
@@ -313,7 +313,7 @@ export const FILMIC_TABS: readonly TabSpec<FilmicParams>[] = [
             kind: "direct",
             side: "toe",
             label: "Shadows",
-            tooltip: "Distance between middle gray and the start of the shadows roll-off. 0% keeps the toe at middle gray, 100% pushes it to the point where the current slope would hit the output black level.",
+            tooltip: "Distance between middle grey and the start of the shadows roll-off. 0% keeps the toe at middle grey, 100% pushes it to the point where the current slope would hit the output black level.",
             min: 0.1,
             max: 90,
             reset: 10,
@@ -336,12 +336,12 @@ export const FILMIC_TABS: readonly TabSpec<FilmicParams>[] = [
         ],
       },
       {
-        title: "Color mapping",
+        title: "Colour mapping",
         controls: [
           filmicSlider(
             "saturation",
-            "Color preservation",
-            "How much of the per-channel hue drift to keep. saturation is not affected: valid diffuse colors (skin tones, product colors) keep their saturation and strongly compressed colors bleach, at any setting. -100% is pure AgX: full hue drift (the 'film' look). 0% (default) removes half the hue drift. +100% restores the original hues exactly.",
+            "Colour preservation",
+            "How much of the per-channel hue drift to keep. saturation is not affected: valid diffuse colours (skin tones, product colours) keep their saturation and strongly compressed colours bleach, at any setting. -100% is pure AgX: full hue drift (the 'film' look). 0% (default) removes half the hue drift. +100% restores the original hues exactly.",
             -100, 100, 0.1, "%",
           ),
         ],
@@ -352,15 +352,15 @@ export const FILMIC_TABS: readonly TabSpec<FilmicParams>[] = [
           {
             kind: "select",
             key: "version",
-            label: "Color science",
-            tooltip: "V8 tone maps each RGB channel separately in an inset rendering space: highlights bleach toward white and hues drift as tonal compression increases, with a parametric hue recovery on the color preservation slider.",
+            label: "Colour science",
+            tooltip: "V8 tone maps each RGB channel separately in an inset rendering space: highlights bleach toward white and hues drift as tonal compression increases, with a parametric hue recovery on the colour preservation slider.",
             options: VERSION_OPTIONS,
           },
           {
             kind: "toggle",
             key: "auto_hardness",
             label: "Auto adjust hardness",
-            tooltip: "Enable to auto-set the look hardness depending on the scene white and black points. this keeps the middle gray on the identity line and improves fast tuning. disable if you want a manual control.",
+            tooltip: "Enable to auto-set the look hardness depending on the scene white and black points. this keeps the middle grey on the identity line and improves fast tuning. disable if you want a manual control.",
           },
         ],
       },
@@ -377,8 +377,8 @@ export const FILMIC_TABS: readonly TabSpec<FilmicParams>[] = [
           filmicSlider("black_point_target", "Target black luminance", "Luminance of output pure black, this should be 0% except if you want a faded look", 0, 20, 0.0001, "%"),
           filmicSlider(
             "grey_point_target",
-            "Target middle gray",
-            "Middle gray value of the target display or color space. you should never touch that unless you know what you are doing.",
+            "Target middle grey",
+            "Middle grey value of the target display or colour space. you should never touch that unless you know what you are doing.",
             1, 50, 0.01, "%", 1, customGrey,
           ),
           filmicSlider("white_point_target", "Target white luminance", "Luminance of output pure white, this should be 100% except if you want a faded look", 0, 100, 0.01, "%"),

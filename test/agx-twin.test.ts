@@ -65,11 +65,31 @@ describe("agxPixel properties", () => {
     }
   });
 
-  it("renders export and working profile as the Rec2020 base", () => {
+  const colours = [[1, 0, 0], [-0.2, 0.6, -0.1], [8, 7.5, 7]] as const;
+
+  it("renders export and working profile as the sRGB base, Safelight's working primaries, from version 2", () => {
+    const rec709 = deriveAgx(p({ base_primaries: 5 }));
+    for (const base_primaries of [0, 1]) {
+      const u = deriveAgx(p({ base_primaries }));
+      for (const version of [2, 3]) {
+        for (const c of colours) expect(agxPixel(c, u, version), `base ${base_primaries}, v${version}`).toEqual(agxPixel(c, rec709, version));
+      }
+    }
+  });
+
+  it("renders export and working profile as the Rec2020 base on version 1", () => {
     const rec2020 = deriveAgx(AGX_DEFAULTS);
     for (const base_primaries of [0, 1]) {
       const u = deriveAgx(p({ base_primaries }));
-      for (const c of [[1, 0, 0], [-0.2, 0.6, -0.1], [8, 7.5, 7]] as const) expect(agxPixel(c, u)).toEqual(agxPixel(c, rec2020));
+      for (const c of colours) expect(agxPixel(c, u, 1), `base ${base_primaries}`).toEqual(agxPixel(c, rec2020, 2));
+    }
+    expect(agxPixel([1, 0, 0], deriveAgx(p({ base_primaries: 1 })), 1)).not.toEqual(agxPixel([1, 0, 0], deriveAgx(p({ base_primaries: 1 })), 2));
+  });
+
+  it("renders every other base alike on every version", () => {
+    for (const base_primaries of [2, 3, 4, 5]) {
+      const u = deriveAgx(p({ base_primaries, red_rotation: 0.1, look_slope: 1.1 }));
+      for (const c of colours) expect(agxPixel(c, u, 1), `base ${base_primaries}`).toEqual(agxPixel(c, u, 2));
     }
   });
 });

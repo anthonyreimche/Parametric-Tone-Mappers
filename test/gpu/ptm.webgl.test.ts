@@ -74,6 +74,8 @@ const AGX_CASES: [string, Partial<AgxParams>][] = [
   ["Display P3 base", { base_primaries: 3 }],
   ["Adobe RGB base", { base_primaries: 4 }],
   ["sRGB base", { base_primaries: 5 }],
+  ["export-profile base", { base_primaries: 0 }],
+  ["working-profile base", { base_primaries: 1, red_rotation: 0.1, look_saturation: 1.3 }],
   ["auto gamma", { auto_gamma: true }],
   ["power 10 at target white", { curve_toe_power: 10, curve_shoulder_power: 10, curve_pivot_y_linear_output: 1 }],
   ["linear sections", { curve_linear_ratio_below_pivot: 0.5, curve_linear_ratio_above_pivot: 0.5 }],
@@ -108,8 +110,10 @@ describe("AgX on the GPU", () => {
   it.each(AGX_CASES)("matches the twin: %s", (label, over) => {
     const params = { ...AGX_DEFAULTS, ...over };
     const u = deriveAgx(params);
-    const want = PATCHES.map((p) => encode3(agxPixel(half3(p), u)));
-    for (const version of [2, 3]) compare(`${label} v${version}`, render(AGX_ID, bagOf(AGX_ID, params), version), want, 5e-4);
+    for (const version of [2, 3]) {
+      const want = PATCHES.map((p) => encode3(agxPixel(half3(p), u, version)));
+      compare(`${label} v${version}`, render(AGX_ID, bagOf(AGX_ID, params), version), want, 5e-4);
+    }
   });
 });
 

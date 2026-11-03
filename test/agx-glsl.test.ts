@@ -15,8 +15,20 @@ describe("AgX GLSL", () => {
     expect(SOURCE).not.toMatch(/\btexture(Lod|Fetch|Grad|Offset)?\s*\(|\btexelFetch\s*\(|\bdFd[xy]\s*\(/);
   });
 
-  it("keeps out of the host's preprocessor and template traps", () => {
-    expect(SOURCE).not.toMatch(/#\s*(define|ifdef|if)\b/);
+  // Builds before Safelight 3.2.0 don't define SL_PROCESS_VERSION, and #if on an undefined name fails to compile.
+  it("uses the preprocessor only for the process version gate, which builds without it pass", () => {
+    const directives = [...SOURCE.matchAll(/^\s*#.*$/gm)].map((m) => m[0].trim());
+    expect(directives).toEqual(["#ifdef SL_PROCESS_VERSION", "#if SL_PROCESS_VERSION >= 2", "#endif", "#endif"]);
+  });
+
+  it("draws version 1 with its own matrices and luminance", () => {
+    expect(SOURCE).toMatch(/\bagxV2\(\)\s*\?\s*agxLumaY\s*:\s*agxLumaYV1\b/);
+    for (const m of ["agxPipeToBase", "agxBaseToRendering", "agxRenderingToPipe"]) {
+      expect(AGX_GLSL, m).toMatch(new RegExp(`\\bv2 \\? ${m} : ${m}V1\\b`));
+    }
+  });
+
+  it("keeps out of the host's template traps", () => {
     expect(SOURCE).not.toContain("`");
     // A bare integer assigned to a float is a compile error in GLSL ES.
     expect(SOURCE).not.toMatch(/\bfloat\s+\w+\s*=\s*-?\d+\s*;/);

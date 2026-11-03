@@ -147,13 +147,18 @@ export function agxCurve(p: AgxParams): AgxCurve {
   };
 }
 
-/** base_primaries: 0 (export profile) and 1 (working profile) render as
+/** base_primaries 1 (working profile) is Safelight's working space, linear
+ *  Rec.709 (the sRGB profile), from process version 2. 0 (export profile) is
+ *  too: derive.fn is handed only the transform's params, and the export colour
+ *  space is picked per export, after this transform, by a program that draws
+ *  the preview as well. Version 1, and params without a version, keep both as
  *  Rec2020, darktable's default working space (spec §5.3). */
-export function baseProfile(index: number): Profile {
+export function baseProfile(index: number, processVersion?: number): Profile {
   if (index === 3) return DISPLAY_P3;
   if (index === 4) return ADOBE_RGB;
   if (index === 5) return SRGB;
-  return REC2020;
+  if (index === 2) return REC2020;
+  return (processVersion ?? 1) >= 2 ? SRGB : REC2020;
 }
 
 // custom_primaries.c L23-74: the nearest edge of the profile's primaries
@@ -263,8 +268,8 @@ function displacedMatrices(base: Profile, q: Primaries): AgxMatrices | null {
  *  Displaced primaries with a singular matrix (master purity boost 2 with a
  *  purity boost of 0.5 puts a primary on white) render as the unmodified
  *  primaries, which is what disable adjustments gives. */
-export function agxMatrices(p: AgxParams): AgxMatrices {
-  const base = baseProfile(p.base_primaries);
+export function agxMatrices(p: AgxParams, processVersion?: number): AgxMatrices {
+  const base = baseProfile(p.base_primaries, processVersion);
   const m = displacedMatrices(base, primariesOf(p)) ?? displacedMatrices(base, UNADJUSTED);
   // A profile's own primaries are never singular.
   if (!m) throw new Error("singular colour matrix");
@@ -276,6 +281,10 @@ export const AGX_UNIFORM_TYPES = {
   agxBaseToRendering: "mat3",
   agxRenderingToPipe: "mat3",
   agxLumaY: "vec3",
+  agxPipeToBaseV1: "mat3",
+  agxBaseToRenderingV1: "mat3",
+  agxRenderingToPipeV1: "mat3",
+  agxLumaYV1: "vec3",
   agxRange: "vec4",
   agxToe: "vec4",
   agxShoulder: "vec4",
@@ -290,19 +299,27 @@ export type AgxUniforms = Record<keyof typeof AGX_UNIFORM_TYPES, number[]>;
 
 const flag = (b: boolean): number => (b ? 1 : 0);
 
-/** Every uniform the AgX GLSL reads, matrices column-major. Packing:
- *  agxRange (black EV, range EV, gamma, look tuned), agxToe/agxShoulder
- *  (transition x, transition y, scale, power), agxCurveC (slope, intercept,
- *  target black, target white), agxToeFallback/agxShFallback (needed, coeff,
- *  power, 0), agxLook (m, b, power, saturation), agxHue (restore, mix). */
+/** Every uniform the AgX GLSL reads, matrices column-major. derive.fn isn't
+ *  told the photo's process version, so the matrices come twice: as version
+ *  2 and later draw them, and with the V1 suffix as version 1 does; the GLSL
+ *  picks by SL_PROCESS_VERSION. Packing: agxRange (black EV, range EV, gamma,
+ *  look tuned), agxToe/agxShoulder (transition x, transition y, scale,
+ *  power), agxCurveC (slope, intercept, target black, target white),
+ *  agxToeFallback/agxShFallback (needed, coeff, power, 0), agxLook (m, b,
+ *  power, saturation), agxHue (restore, mix). */
 export function deriveAgx(p: AgxParams): AgxUniforms {
   const c = agxCurve(p);
-  const m = agxMatrices(p);
+  const m = agxMatrices(p, 2);
+  const v1 = agxMatrices(p, 1);
   return {
     agxPipeToBase: columnMajor(m.pipeToBase),
     agxBaseToRendering: columnMajor(m.baseToRendering),
     agxRenderingToPipe: columnMajor(m.renderingToPipe),
     agxLumaY: [...row(m.renderingToXyz, 1)],
+    agxPipeToBaseV1: columnMajor(v1.pipeToBase),
+    agxBaseToRenderingV1: columnMajor(v1.baseToRendering),
+    agxRenderingToPipeV1: columnMajor(v1.renderingToPipe),
+    agxLumaYV1: [...row(v1.renderingToXyz, 1)],
     agxRange: [c.blackEv, c.rangeEv, c.gamma, flag(c.lookTuned)],
     agxToe: [c.toeTx, c.toeTy, c.toeScale, c.toePower],
     agxShoulder: [c.shTx, c.shTy, c.shScale, c.shPower],

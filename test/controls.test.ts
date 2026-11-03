@@ -68,7 +68,7 @@ describe("AgX controls", () => {
 
   it("give the pivot darktable's label and tooltip", () => {
     const pivot = controlsOf(AGX_TABS).find((c) => c.kind === "pivot");
-    expect(pivot).toEqual({ kind: "pivot", label: "Pivot relative exposure", tooltip: "Set the pivot's input exposure in EV relative to mid-gray" });
+    expect(pivot).toEqual({ kind: "pivot", label: "Pivot relative exposure", tooltip: "Set the pivot's input exposure in EV relative to mid-grey" });
   });
 
   it("keep each slider's span inside the param's hard range, in display units", () => {
@@ -130,7 +130,7 @@ describe("AgX controls", () => {
     };
     expect(tip("agxAutoTune")).toBe("Set black and white relative exposure from the image in view");
     expect(tip("agxReadExposure")).toBe("Read exposure from the Exposure slider");
-    expect(tip("base_primaries")).toBe("Color space primaries to use as the base for below adjustments. Working profile is Rec2020 here.");
+    expect(tip("base_primaries")).toBe("Colour space primaries to use as the base for below adjustments. Follows the working space, linear Rec.709 (Rec.2020 on older version 1 edits).");
     for (const c of controlsOf(AGX_TABS)) {
       if (c.kind !== "graph") expect(c.tooltip, c.label).not.toMatch(/selected area|exposure module|export profile/);
     }
@@ -247,10 +247,10 @@ describe("filmic controls", () => {
       return c && c.kind !== "graph" ? c.tooltip : "";
     };
     expect(tip("black_point_target")).toBe("Luminance of output pure black, this should be 0% except if you want a faded look");
-    expect(tip("grey_point_target")).toBe("Middle gray value of the target display or color space. you should never touch that unless you know what you are doing.");
+    expect(tip("grey_point_target")).toBe("Middle grey value of the target display or colour space. you should never touch that unless you know what you are doing.");
     expect(tip("white_point_target")).toBe("Luminance of output pure white, this should be 100% except if you want a faded look");
-    expect(tip("custom_grey")).toBe("Enable to input custom middle-gray values. this is not recommended in general. fix the global exposure with the Exposure slider instead. disable to use standard 18.45 % middle gray.");
-    expect(tip("version")).toContain("on the color preservation slider");
+    expect(tip("custom_grey")).toBe("Enable to input custom middle-grey values. this is not recommended in general. fix the global exposure with the Exposure slider instead. disable to use standard 18.45 % middle grey.");
+    expect(tip("version")).toContain("on the colour preservation slider");
     expect(tip("version")).not.toContain("saturation slider");
   });
 

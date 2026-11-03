@@ -61,21 +61,21 @@ const BLACK = WHITE - 12;
 const POWER = Math.log(0.1845) / Math.log(-BLACK / (WHITE - BLACK));
 
 export const FILMIC_PARAMS = {
-  grey_point_source: { type: "float", default: 18.45, min: 0, max: 100, label: "middle gray luminance" },
+  grey_point_source: { type: "float", default: 18.45, min: 0, max: 100, label: "middle grey luminance" },
   black_point_source: { type: "float", default: BLACK, min: -16, max: -0.1, label: "black relative exposure" },
   white_point_source: { type: "float", default: WHITE, min: 0.1, max: 16, label: "white relative exposure" },
   security_factor: { type: "float", default: 0, min: -50, max: 200, label: "dynamic range scaling" },
-  grey_point_target: { type: "float", default: 18.45, min: 1, max: 50, label: "target middle gray" },
+  grey_point_target: { type: "float", default: 18.45, min: 1, max: 50, label: "target middle grey" },
   black_point_target: { type: "float", default: 0.01517634, min: 0, max: 20, label: "target black luminance" },
   white_point_target: { type: "float", default: 100, min: 0, max: 1600, label: "target white luminance" },
   output_power: { type: "float", default: POWER, min: 1, max: 10, label: "hardness" },
   latitude: { type: "float", default: 10, min: 0.01, max: 99, label: "latitude" },
   contrast: { type: "float", default: 1.18, min: 0, max: 5, label: "contrast" },
-  saturation: { type: "float", default: 0, min: -200, max: 200, label: "color preservation" },
+  saturation: { type: "float", default: 0, min: -200, max: 200, label: "colour preservation" },
   balance: { type: "float", default: 0, min: -50, max: 50, label: "shadows ↔ highlights balance" },
-  version: { type: "int", default: 7, min: 5, max: 9, label: "color science" },
+  version: { type: "int", default: 7, min: 5, max: 9, label: "colour science" },
   auto_hardness: { type: "bool", default: true, label: "auto adjust hardness" },
-  custom_grey: { type: "bool", default: false, label: "use custom middle-gray values" },
+  custom_grey: { type: "bool", default: false, label: "use custom middle-grey values" },
   shadows: { type: "int", default: 3, min: 0, max: 3, label: "contrast in shadows" },
   highlights: { type: "int", default: 3, min: 0, max: 3, label: "contrast in highlights" },
 } as const satisfies ParamTable;

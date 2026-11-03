@@ -311,7 +311,7 @@ describe("AgX", () => {
     expect(bag()[`${AGX_ID}.look_slope`]).toBe(AGX_DEFAULTS.look_slope);
   });
 
-  it("resets the pivot to mid-gray on a double-click", () => {
+  it("resets the pivot to mid-grey on a double-click", () => {
     mount({ displayTransform: AGX_ID, bag: { [`${AGX_ID}.curve_pivot_x`]: 0.8 } });
     fireEvent.doubleClick(slider(/^Pivot relative exposure/));
     expect(agxPivotEv({ ...AGX_DEFAULTS, curve_pivot_x: bag()[`${AGX_ID}.curve_pivot_x`] as number })).toBeCloseTo(0, 9);
@@ -589,15 +589,15 @@ describe("filmic", () => {
     expect(now.white_point_source).toBeCloseTo(FILMIC_DEFAULTS.white_point_source * 0.5, 9);
   });
 
-  it("couples a typed middle gray from the values before the typing, in one undo step", () => {
+  it("couples a typed middle grey from the values before the typing, in one undo step", () => {
     mount({ displayTransform: FILMIC_ID, bag: { [`${FILMIC_ID}.custom_grey`]: true } });
-    type("Middle gray luminance (%) value", ["0", "0.", "0.5"]);
+    type("Middle grey luminance (%) value", ["0", "0.", "0.5"]);
     const shift = Math.log2(FILMIC_DEFAULTS.grey_point_source / 0.5);
     const now = filmicBag();
     expect(now.grey_point_source).toBe(0.5);
     expect(now.black_point_source).toBeCloseTo(FILMIC_DEFAULTS.black_point_source - shift, 9);
     expect(now.white_point_source).toBeCloseTo(FILMIC_DEFAULTS.white_point_source + shift, 9);
-    expect(rig.commits).toEqual(["Middle gray luminance"]);
+    expect(rig.commits).toEqual(["Middle grey luminance"]);
   });
 
   // As for AgX's; auto hardness writes the hardness with every scene write, so the start stores the one it keeps.
@@ -614,14 +614,14 @@ describe("filmic", () => {
       expect(rig.commits).toEqual([]);
     });
 
-    it("leaves the ends unshifted when the middle gray is retyped to its start", () => {
+    it("leaves the ends unshifted when the middle grey is retyped to its start", () => {
       const start = {
         [`${FILMIC_ID}.custom_grey`]: true,
         [`${FILMIC_ID}.grey_point_source`]: 18.45,
         [`${FILMIC_ID}.output_power`]: filmicPower(FILMIC_DEFAULTS),
       };
       mount({ displayTransform: FILMIC_ID, bag: start });
-      type("Middle gray luminance (%) value", ["1", "18", "18.", "18.4", "18.45"]);
+      type("Middle grey luminance (%) value", ["1", "18", "18.", "18.4", "18.45"]);
       expect(ends()).toEqual([FILMIC_DEFAULTS.black_point_source, FILMIC_DEFAULTS.white_point_source]);
       expect(bag()).toEqual(start);
       expect(rig.commits).toEqual([]);
@@ -646,11 +646,11 @@ describe("filmic", () => {
     expect(now.output_power).toBeCloseTo(filmicPower({ ...now, auto_hardness: true }), 9);
   });
 
-  it("hides the middle gray sliders until custom values are on", () => {
+  it("hides the middle grey sliders until custom values are on", () => {
     mount({ displayTransform: FILMIC_ID });
-    expect(screen.queryByRole("slider", { name: /^Middle gray luminance/ })).toBeNull();
-    fireEvent.click(screen.getByRole("checkbox", { name: "Use custom middle-gray values" }));
-    expect(screen.getByRole("slider", { name: /^Middle gray luminance/ })).toBeTruthy();
+    expect(screen.queryByRole("slider", { name: /^Middle grey luminance/ })).toBeNull();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Use custom middle-grey values" }));
+    expect(screen.getByRole("slider", { name: /^Middle grey luminance/ })).toBeTruthy();
   });
 
   it("offers neither presets nor primaries resets", () => {

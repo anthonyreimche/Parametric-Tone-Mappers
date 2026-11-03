@@ -56,13 +56,27 @@ describe("primaries", () => {
     expect(matrixFromPrimaries([r, r, b], REC2020.white)).toBeNull();
   });
 
-  it("renders export and working profile as Rec2020, and each other choice as its own profile", () => {
-    expect(baseProfile(0)).toBe(REC2020);
-    expect(baseProfile(1)).toBe(REC2020);
-    expect(baseProfile(2)).toBe(REC2020);
-    expect(baseProfile(3)).toBe(DISPLAY_P3);
-    expect(baseProfile(4)).toBe(ADOBE_RGB);
-    expect(baseProfile(5)).toBe(SRGB);
+  it("renders export and working profile as Safelight's working space, linear Rec.709, from version 2", () => {
+    for (const version of [2, 3]) {
+      expect(baseProfile(0, version), `v${version}`).toBe(SRGB);
+      expect(baseProfile(1, version), `v${version}`).toBe(SRGB);
+    }
+  });
+
+  it("keeps export and working profile as Rec2020 on version 1 and on params without a version", () => {
+    for (const version of [1, undefined]) {
+      expect(baseProfile(0, version), `v${version}`).toBe(REC2020);
+      expect(baseProfile(1, version), `v${version}`).toBe(REC2020);
+    }
+  });
+
+  it("renders each other choice as its own profile on every version", () => {
+    for (const version of [1, 2, 3, undefined]) {
+      expect(baseProfile(2, version)).toBe(REC2020);
+      expect(baseProfile(3, version)).toBe(DISPLAY_P3);
+      expect(baseProfile(4, version)).toBe(ADOBE_RGB);
+      expect(baseProfile(5, version)).toBe(SRGB);
+    }
   });
 });
 
@@ -156,6 +170,30 @@ describe("deriveAgx", () => {
     expect(u.agxHue).toEqual([1, AGX_DEFAULTS.look_original_hue_mix_ratio]);
   });
 
+  // derive.fn sees only the transform's params, so it hands the shader both sets and SL_PROCESS_VERSION picks one.
+  it("derives version 1's matrices beside version 2's, apart only for export and working profile", () => {
+    const PAIRS = [
+      ["agxPipeToBase", "agxPipeToBaseV1"],
+      ["agxBaseToRendering", "agxBaseToRenderingV1"],
+      ["agxRenderingToPipe", "agxRenderingToPipeV1"],
+      ["agxLumaY", "agxLumaYV1"],
+    ] as const;
+    const over = { red_rotation: 0.1, blue_inset: 0.2, master_outset_ratio: 1.2 };
+    for (const base_primaries of [2, 3, 4, 5]) {
+      const u = deriveAgx(p({ ...over, base_primaries }));
+      for (const [now, v1] of PAIRS) expect(u[v1], `${v1}, base ${base_primaries}`).toEqual(u[now]);
+    }
+    const rec2020 = deriveAgx(p({ ...over, base_primaries: 2 }));
+    const rec709 = deriveAgx(p({ ...over, base_primaries: 5 }));
+    for (const base_primaries of [0, 1]) {
+      const u = deriveAgx(p({ ...over, base_primaries }));
+      for (const [now, v1] of PAIRS) {
+        expect(u[now], `${now}, base ${base_primaries}`).toEqual(rec709[now]);
+        expect(u[v1], `${v1}, base ${base_primaries}`).toEqual(rec2020[now]);
+      }
+    }
+  });
+
   it("raises the flags the shader branches on", () => {
     const tuned = deriveAgx(p({ look_slope: 1.2, look_original_hue_mix_ratio: 0 }));
     expect(tuned.agxRange[3]).toBe(1);
@@ -169,7 +207,10 @@ describe("deriveAgx", () => {
 describe("a singular primaries corner", () => {
   // Master purity boost 2 with two purity boosts at 0.5 puts two outset primaries on white. The curve and look are moved so their uniforms aren't the defaults.
   const SINGULAR = p({ master_outset_ratio: 2, red_outset: 0.5, green_outset: 0.5, curve_contrast_around_pivot: 2.5, look_saturation: 1.3 });
-  const MATRICES = ["agxPipeToBase", "agxBaseToRendering", "agxRenderingToPipe", "agxLumaY"] as const;
+  const MATRICES = [
+    "agxPipeToBase", "agxBaseToRendering", "agxRenderingToPipe", "agxLumaY",
+    "agxPipeToBaseV1", "agxBaseToRenderingV1", "agxRenderingToPipeV1", "agxLumaYV1",
+  ] as const;
   const CURVE = ["agxRange", "agxToe", "agxShoulder", "agxCurveC", "agxToeFallback", "agxShFallback", "agxLook", "agxHue"] as const;
 
   it("renders the unmodified primaries, as disable adjustments does", () => {

@@ -2,7 +2,7 @@
   "name": "safelight-parametric-tonemappers",
   "private": true,
   "version": "1.0.0",
-  "description": "Parametric Tone Mappers for Safelight: ports of darktable's AgX and Ansel's filmic rgb with their sliders.",
+  "description": "Parametric Tone Mappers for Safelight: AgX and filmic rgb display transforms with all of their sliders.",
   "type": "module",
   "scripts": {
     "build": "vite build",

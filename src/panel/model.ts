@@ -23,7 +23,7 @@ import { withinRange } from "../param-table";
 
 const PIVOT_EPSILON = 1e-6;
 
-/** The pivot's exposure in EV relative to mid-gray. */
+/** The pivot's exposure in EV relative to mid-grey. */
 export const agxPivotEv = (p: AgxParams): number =>
   p.range_black_relative_ev + p.curve_pivot_x * (p.range_white_relative_ev - p.range_black_relative_ev);
 

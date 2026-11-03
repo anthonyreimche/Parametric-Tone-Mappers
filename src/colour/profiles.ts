@@ -4,7 +4,7 @@
 // cmsCreateRGBProfile from D65 primaries (darktable's colorspaces.c tables and
 // D65 white 0.31271/0.32902), colorants Bradford-adapted to lcms2's D50, and
 // primaries/white read back as xy of the adapted colorants and of D50 (Ref
-// §1.5). lcms2's s15.16 quantisation of stored tags is not reproduced; in-memory
+// §1.5). lcms2's s15.16 quantization of stored tags is not reproduced; in-memory
 // profiles keep doubles.
 //
 // The primaries tables are transcribed from darktable's src/common/colorspaces.c
