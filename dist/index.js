@@ -326,8 +326,8 @@ function le(e) {
 		lookB: e.look_lift * E
 	};
 }
-function ue(e) {
-	return e === 3 ? A : e === 4 ? j : e === 5 ? M : k;
+function ue(e, t) {
+	return e === 3 ? A : e === 4 ? j : e === 5 ? M : e === 2 ? k : (t ?? 1) >= 2 ? M : k;
 }
 function de(e, t, n) {
 	let r = e.white.x, i = e.white.y, a = r + t, o = i + n, s = ae;
@@ -423,16 +423,20 @@ function _e(e, t) {
 		renderingToXyz: i
 	};
 }
-function ve(e) {
-	let t = ue(e.base_primaries), n = _e(t, he(e)) ?? _e(t, ge);
-	if (!n) throw Error("singular colour matrix");
-	return n;
+function ve(e, t) {
+	let n = ue(e.base_primaries, t), r = _e(n, he(e)) ?? _e(n, ge);
+	if (!r) throw Error("singular colour matrix");
+	return r;
 }
 var ye = {
 	agxPipeToBase: "mat3",
 	agxBaseToRendering: "mat3",
 	agxRenderingToPipe: "mat3",
 	agxLumaY: "vec3",
+	agxPipeToBaseV1: "mat3",
+	agxBaseToRenderingV1: "mat3",
+	agxRenderingToPipeV1: "mat3",
+	agxLumaYV1: "vec3",
 	agxRange: "vec4",
 	agxToe: "vec4",
 	agxShoulder: "vec4",
@@ -443,12 +447,16 @@ var ye = {
 	agxHue: "vec2"
 }, F = (e) => +!!e;
 function be(e) {
-	let t = le(e), n = ve(e);
+	let t = le(e), n = ve(e, 2), r = ve(e, 1);
 	return {
 		agxPipeToBase: S(n.pipeToBase),
 		agxBaseToRendering: S(n.baseToRendering),
 		agxRenderingToPipe: S(n.renderingToPipe),
 		agxLumaY: [...b(n.renderingToXyz, 1)],
+		agxPipeToBaseV1: S(r.pipeToBase),
+		agxBaseToRenderingV1: S(r.baseToRendering),
+		agxRenderingToPipeV1: S(r.renderingToPipe),
+		agxLumaYV1: [...b(r.renderingToXyz, 1)],
 		agxRange: [
 			t.blackEv,
 			t.rangeEv,
@@ -526,6 +534,15 @@ ${Te("agxCompress", [
 	.59846986045365,
 	.1357121025213052
 ])}
+bool agxV2() {
+  bool v2 = false;
+#ifdef SL_PROCESS_VERSION
+#if SL_PROCESS_VERSION >= 2
+  v2 = true;
+#endif
+#endif
+  return v2;
+}
 float agxSigmoid(float u, float p) {
   return u / pow(1.0 + pow(u, p), 1.0 / p);
 }
@@ -591,7 +608,7 @@ vec3 agxToneMap(vec3 r) {
       v.r > 0.0 ? pow(v.r, agxLook.z) : v.r,
       v.g > 0.0 ? pow(v.g, agxLook.z) : v.g,
       v.b > 0.0 ? pow(v.b, agxLook.z) : v.b);
-    float luma = dot(agxLumaY, t);
+    float luma = dot(agxV2() ? agxLumaY : agxLumaYV1, t);
     t = luma + agxLook.w * (t - luma);
   }
   t = pow(max(t, vec3(0.0)), vec3(agxRange.z));
@@ -603,7 +620,7 @@ vec3 agxToneMap(vec3 r) {
     return agxFromHsv(hsv);
   }
   return t;
-}`, De = "vec3 pipelineToDisplay(vec3 lin) {\n  vec3 base = agxCompress(agxPipeToBase * ptmSanitise(lin));\n  vec3 r = agxToneMap(agxBaseToRendering * base);\n  return ptmEncode(agxRenderingToPipe * r);\n}", L = {
+}`, De = "vec3 pipelineToDisplay(vec3 lin) {\n  bool v2 = agxV2();\n  vec3 base = agxCompress((v2 ? agxPipeToBase : agxPipeToBaseV1) * ptmSanitise(lin));\n  vec3 r = agxToneMap((v2 ? agxBaseToRendering : agxBaseToRenderingV1) * base);\n  return ptmEncode((v2 ? agxRenderingToPipe : agxRenderingToPipeV1) * r);\n}", L = {
 	look_lift: {
 		type: "float",
 		default: 0,
@@ -971,7 +988,7 @@ var Ve = (e) => ze(m(Fe, m(Ne, e))), He = (e) => m(Pe, m(Ie, Be(e))), Ue = 2.45,
 		default: 18.45,
 		min: 0,
 		max: 100,
-		label: "middle gray luminance"
+		label: "middle grey luminance"
 	},
 	black_point_source: {
 		type: "float",
@@ -999,7 +1016,7 @@ var Ve = (e) => ze(m(Fe, m(Ne, e))), He = (e) => m(Pe, m(Ie, Be(e))), Ue = 2.45,
 		default: 18.45,
 		min: 1,
 		max: 50,
-		label: "target middle gray"
+		label: "target middle grey"
 	},
 	black_point_target: {
 		type: "float",
@@ -1041,7 +1058,7 @@ var Ve = (e) => ze(m(Fe, m(Ne, e))), He = (e) => m(Pe, m(Ie, Be(e))), Ue = 2.45,
 		default: 0,
 		min: -200,
 		max: 200,
-		label: "color preservation"
+		label: "colour preservation"
 	},
 	balance: {
 		type: "float",
@@ -1055,7 +1072,7 @@ var Ve = (e) => ze(m(Fe, m(Ne, e))), He = (e) => m(Pe, m(Ie, Be(e))), Ue = 2.45,
 		default: 7,
 		min: 5,
 		max: 9,
-		label: "color science"
+		label: "colour science"
 	},
 	auto_hardness: {
 		type: "bool",
@@ -1065,7 +1082,7 @@ var Ve = (e) => ze(m(Fe, m(Ne, e))), He = (e) => m(Pe, m(Ie, Be(e))), Ue = 2.45,
 	custom_grey: {
 		type: "bool",
 		default: !1,
-		label: "use custom middle-gray values"
+		label: "use custom middle-grey values"
 	},
 	shadows: {
 		type: "int",
@@ -1881,7 +1898,7 @@ function Wt(e, t) {
 		"red",
 		"green",
 		"blue"
-	].flatMap((n) => e === "before" ? [K(`${n}_inset`, `${J(n)} attenuation`, `Increase to desaturate ${n}s in highlights faster`, 0, 99, .1, "%", G, t, 0), K(`${n}_rotation`, `${J(n)} rotation`, `Shift the ${n} primary towards ${Ut[n]}`, -30, 30, .1, "°", Vt, t, 0)] : [K(`${n}_outset`, `${J(n)} purity boost`, `Restore the purity of ${n}, mostly in midtones and shadows`, 0, 99, .1, "%", G, t, 0), K(`${n}_unrotation`, `${J(n)} reverse rotation`, `Reverse the color shift in ${n}s`, -30, 30, .1, "°", Vt, t, 0)]);
+	].flatMap((n) => e === "before" ? [K(`${n}_inset`, `${J(n)} attenuation`, `Increase to desaturate ${n}s in highlights faster`, 0, 99, .1, "%", G, t, 0), K(`${n}_rotation`, `${J(n)} rotation`, `Shift the ${n} primary towards ${Ut[n]}`, -30, 30, .1, "°", Vt, t, 0)] : [K(`${n}_outset`, `${J(n)} purity boost`, `Restore the purity of ${n}, mostly in midtones and shadows`, 0, 99, .1, "%", G, t, 0), K(`${n}_unrotation`, `${J(n)} reverse rotation`, `Reverse the colour shift in ${n}s`, -30, 30, .1, "°", Vt, t, 0)]);
 }
 var Gt = [
 	1,
@@ -1903,8 +1920,8 @@ var Gt = [
 		{
 			title: "Input exposure range",
 			controls: [
-				K("range_white_relative_ev", "White relative exposure", "Relative exposure above mid-gray (white point)", 1, 10, .01, "EV"),
-				K("range_black_relative_ev", "Black relative exposure", "Relative exposure below mid-gray (black point)", -20, -1, .01, "EV"),
+				K("range_white_relative_ev", "White relative exposure", "Relative exposure above mid-grey (white point)", 1, 10, .01, "EV"),
+				K("range_black_relative_ev", "Black relative exposure", "Relative exposure below mid-grey (black point)", -20, -1, .01, "EV"),
 				K("dynamic_range_scaling", "Dynamic range scaling", "Symmetrically increase or decrease the computed dynamic range. useful to give a safety margin to extreme luminances.", -50, 50, .1, "%", G),
 				{
 					kind: "action",
@@ -1926,7 +1943,7 @@ var Gt = [
 				{
 					kind: "pivot",
 					label: "Pivot relative exposure",
-					tooltip: "Set the pivot's input exposure in EV relative to mid-gray"
+					tooltip: "Set the pivot's input exposure in EV relative to mid-grey"
 				},
 				K("curve_pivot_y_linear_output", "Pivot target output", "Darken or brighten the pivot (linear output power)", 0, 100, .1, "%", G),
 				K("curve_contrast_around_pivot", "Contrast", "Slope of the linear section around the pivot", .1, 5, .01),
@@ -1971,7 +1988,7 @@ var Gt = [
 }, {
 	value: "primaries",
 	label: "Primaries",
-	tooltip: "Color primaries adjustments",
+	tooltip: "Colour primaries adjustments",
 	sections: [
 		{
 			title: "Base",
@@ -1979,7 +1996,7 @@ var Gt = [
 				kind: "select",
 				key: "base_primaries",
 				label: "Base primaries",
-				tooltip: "Color space primaries to use as the base for below adjustments. Working profile is Rec2020 here.",
+				tooltip: "Colour space primaries to use as the base for below adjustments. Follows the working space, linear Rec.709 (Rec.2020 on older version 1 edits).",
 				options: Gt
 			}, {
 				kind: "toggle",
@@ -2024,9 +2041,9 @@ var Gt = [
 		sections: [{
 			title: "Scene",
 			controls: [
-				q("grey_point_source", "Middle gray luminance", "Adjust to match the average luminance of the image's subject. the value entered here will then be remapped to 18.45%. decrease the value to increase the overall brightness.", .1, 36, .01, "%", 1, Xt),
-				q("white_point_source", "White relative exposure", "Number of stops between middle gray and pure white. this is a reading a lightmeter would give you on the scene. adjust so highlights clipping is avoided", 2, 8, .01, "EV"),
-				q("black_point_source", "Black relative exposure", "Number of stops between middle gray and pure black. this is a reading a lightmeter would give you on the scene. increase to get more contrast. decrease to recover more details in low-lights.", -14, -3, .01, "EV"),
+				q("grey_point_source", "Middle grey luminance", "Adjust to match the average luminance of the image's subject. the value entered here will then be remapped to 18.45%. decrease the value to increase the overall brightness.", .1, 36, .01, "%", 1, Xt),
+				q("white_point_source", "White relative exposure", "Number of stops between middle grey and pure white. this is a reading a lightmeter would give you on the scene. adjust so highlights clipping is avoided", 2, 8, .01, "EV"),
+				q("black_point_source", "Black relative exposure", "Number of stops between middle grey and pure black. this is a reading a lightmeter would give you on the scene. increase to get more contrast. decrease to recover more details in low-lights.", -14, -3, .01, "EV"),
 				q("security_factor", "Dynamic range scaling", "Symmetrically enlarge or shrink the computed dynamic range. useful to give a safety margin to extreme luminances.", -50, 50, .1, "%"),
 				{
 					kind: "action",
@@ -2040,8 +2057,8 @@ var Gt = [
 			controls: [{
 				kind: "toggle",
 				key: "custom_grey",
-				label: "Use custom middle-gray values",
-				tooltip: "Enable to input custom middle-gray values. this is not recommended in general. fix the global exposure with the Exposure slider instead. disable to use standard 18.45 % middle gray."
+				label: "Use custom middle-grey values",
+				tooltip: "Enable to input custom middle-grey values. this is not recommended in general. fix the global exposure with the Exposure slider instead. disable to use standard 18.45 % middle grey."
 			}]
 		}]
 	},
@@ -2059,7 +2076,7 @@ var Gt = [
 						kind: "direct",
 						side: "shoulder",
 						label: "Highlights",
-						tooltip: "Distance between middle gray and the start of the highlights roll-off. 0% keeps the shoulder at middle gray, 100% pushes it to the point where the current slope would hit the output white level.",
+						tooltip: "Distance between middle grey and the start of the highlights roll-off. 0% keeps the shoulder at middle grey, 100% pushes it to the point where the current slope would hit the output white level.",
 						min: .1,
 						max: 90,
 						reset: 10
@@ -2068,7 +2085,7 @@ var Gt = [
 						kind: "direct",
 						side: "toe",
 						label: "Shadows",
-						tooltip: "Distance between middle gray and the start of the shadows roll-off. 0% keeps the toe at middle gray, 100% pushes it to the point where the current slope would hit the output black level.",
+						tooltip: "Distance between middle grey and the start of the shadows roll-off. 0% keeps the toe at middle grey, 100% pushes it to the point where the current slope would hit the output black level.",
 						min: .1,
 						max: 90,
 						reset: 10
@@ -2091,22 +2108,22 @@ var Gt = [
 				]
 			},
 			{
-				title: "Color mapping",
-				controls: [q("saturation", "Color preservation", "How much of the per-channel hue drift to keep. saturation is not affected: valid diffuse colors (skin tones, product colors) keep their saturation and strongly compressed colors bleach, at any setting. -100% is pure AgX: full hue drift (the 'film' look). 0% (default) removes half the hue drift. +100% restores the original hues exactly.", -100, 100, .1, "%")]
+				title: "Colour mapping",
+				controls: [q("saturation", "Colour preservation", "How much of the per-channel hue drift to keep. saturation is not affected: valid diffuse colours (skin tones, product colours) keep their saturation and strongly compressed colours bleach, at any setting. -100% is pure AgX: full hue drift (the 'film' look). 0% (default) removes half the hue drift. +100% restores the original hues exactly.", -100, 100, .1, "%")]
 			},
 			{
 				title: "Advanced",
 				controls: [{
 					kind: "select",
 					key: "version",
-					label: "Color science",
-					tooltip: "V8 tone maps each RGB channel separately in an inset rendering space: highlights bleach toward white and hues drift as tonal compression increases, with a parametric hue recovery on the color preservation slider.",
+					label: "Colour science",
+					tooltip: "V8 tone maps each RGB channel separately in an inset rendering space: highlights bleach toward white and hues drift as tonal compression increases, with a parametric hue recovery on the colour preservation slider.",
 					options: qt
 				}, {
 					kind: "toggle",
 					key: "auto_hardness",
 					label: "Auto adjust hardness",
-					tooltip: "Enable to auto-set the look hardness depending on the scene white and black points. this keeps the middle gray on the identity line and improves fast tuning. disable if you want a manual control."
+					tooltip: "Enable to auto-set the look hardness depending on the scene white and black points. this keeps the middle grey on the identity line and improves fast tuning. disable if you want a manual control."
 				}]
 			}
 		]
@@ -2119,7 +2136,7 @@ var Gt = [
 			title: "Display",
 			controls: [
 				q("black_point_target", "Target black luminance", "Luminance of output pure black, this should be 0% except if you want a faded look", 0, 20, 1e-4, "%"),
-				q("grey_point_target", "Target middle gray", "Middle gray value of the target display or color space. you should never touch that unless you know what you are doing.", 1, 50, .01, "%", 1, Xt),
+				q("grey_point_target", "Target middle grey", "Middle grey value of the target display or colour space. you should never touch that unless you know what you are doing.", 1, 50, .01, "%", 1, Xt),
 				q("white_point_target", "Target white luminance", "Luminance of output pure white, this should be 100% except if you want a faded look", 0, 100, .01, "%")
 			]
 		}]

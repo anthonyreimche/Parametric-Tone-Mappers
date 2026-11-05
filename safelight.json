@@ -1,7 +1,7 @@
 {
   "id": "parametric-tonemappers",
   "name": "Parametric Tone Mappers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AgX and Filmic RGB as display transforms, with every slider: white and black relative exposure, contrast, toe and shoulder, primaries, look, and auto tune levels.",
   "author": "Anthony Reimche",
   "main": "dist/index.js",
