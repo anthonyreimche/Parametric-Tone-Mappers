@@ -12,10 +12,12 @@ import { FILMIC_PARAMS } from "../filmic/params";
 import { FILMIC_ID } from "../filmic/transform";
 import { defaults, qualify, readParams, unqualify, withinRange, type ParamTable, type ParamValues } from "../param-table";
 import { api, h } from "../runtime";
-import { AGX_TABS, FILMIC_TABS, type ActionId, type Control, type SectionSpec, type TabSpec } from "./controls";
-import { CurveGraph, agxGraph, filmicGraph, type GraphData } from "./Graph";
+import { SIGMOID_PARAMS } from "../sigmoid/params";
+import { SIGMOID_ID } from "../sigmoid/transform";
+import { AGX_TABS, FILMIC_TABS, SIGMOID_TABS, type ActionId, type Control, type SectionSpec, type TabSpec } from "./controls";
+import { CurveGraph, agxGraph, filmicGraph, sigmoidGraph, type GraphData } from "./Graph";
 import { agxEdit, agxPivotEv, agxPivotX, agxSetFromAbove, filmicDirect, filmicEdit, filmicLatitudeBalance } from "./model";
-import { AGX_PRESETS, AGX_PRIMARIES } from "./presets";
+import { AGX_PRESETS, AGX_PRIMARIES, SIGMOID_PRESETS } from "./presets";
 
 export const PANEL_TITLE = "Tone mapper";
 export const INACTIVE_HINT = "This photo uses another display transform. Pick one of these to edit its settings here.";
@@ -155,6 +157,19 @@ const FILMIC_UI: TransformUi<typeof FILMIC_PARAMS> = {
   actions: { filmicAutoTune: { label: "Filmic auto tune levels", scene: true, raw: true, run: filmicAutoTune } },
 };
 
+// darktable's sigmoid couples no sliders; its GUI only hides controls (gui_changed, sigmoid.c L864-875).
+const SIGMOID_UI: TransformUi<typeof SIGMOID_PARAMS> = {
+  id: SIGMOID_ID,
+  name: "Sigmoid",
+  table: SIGMOID_PARAMS,
+  tabs: SIGMOID_TABS,
+  edit: (_prev, patch) => patch,
+  graph: sigmoidGraph,
+  special: () => null,
+  actions: {},
+  presets: SIGMOID_PRESETS,
+};
+
 function choose(id: string): void {
   const dev = api().stores.useDevelopStore.getState();
   dev.setParam("displayTransform", id);
@@ -173,6 +188,7 @@ export function resetActive(): void {
   const id = host.pipelines.effectiveId(host.stores.useDevelopStore.getState().params.displayTransform);
   if (id === AGX_ID) resetTo(AGX_UI);
   else if (id === FILMIC_ID) resetTo(FILMIC_UI);
+  else if (id === SIGMOID_ID) resetTo(SIGMOID_UI);
 }
 
 function Inactive(): ReactElement {
@@ -186,6 +202,7 @@ function Inactive(): ReactElement {
       { gap: 6, wrap: true },
       h(ui.Button, { onClick: () => choose(AGX_ID) }, "Use AgX (parametric)"),
       h(ui.Button, { onClick: () => choose(FILMIC_ID) }, "Use Filmic RGB (parametric)"),
+      h(ui.Button, { onClick: () => choose(SIGMOID_ID) }, "Use Sigmoid (parametric)"),
     ),
   );
 }
@@ -203,6 +220,7 @@ export function TonePanel(): ReactElement {
   const key = `${id}:${photoId}`;
   if (id === AGX_ID) return h(Body<typeof AGX_PARAMS>, { key, ui: AGX_UI, processVersion });
   if (id === FILMIC_ID) return h(Body<typeof FILMIC_PARAMS>, { key, ui: FILMIC_UI, processVersion });
+  if (id === SIGMOID_ID) return h(Body<typeof SIGMOID_PARAMS>, { key, ui: SIGMOID_UI, processVersion });
   return h(Inactive, null);
 }
 
@@ -360,7 +378,9 @@ function Body<T extends ParamTable>({ ui, processVersion }: BodyProps<T>): React
   const menu = (label: string, names: readonly string[], apply: (name: string) => void): ReactElement =>
     h(kit.Select, { key: label, ariaLabel: label, placeholder: label, value: "", options: names.map((n) => ({ value: n, label: n })), onChange: apply });
 
-  const active = ui.tabs.find((t) => t.value === tab) ?? ui.tabs[0];
+  // A tab upstream's GUI would hide gives way to the first, which is always shown.
+  const tabs = ui.tabs.filter((t) => !t.when || t.when(p));
+  const active = tabs.find((t) => t.value === tab) ?? tabs[0];
   const { presets, resets } = ui;
   return h(
     kit.Stack,
@@ -374,7 +394,7 @@ function Body<T extends ParamTable>({ ui, processVersion }: BodyProps<T>): React
       : null,
     h(kit.SegmentedControl, {
       value: active.value,
-      options: ui.tabs.map((t) => ({ value: t.value, label: t.label, title: t.tooltip })),
+      options: tabs.map((t) => ({ value: t.value, label: t.label, title: t.tooltip })),
       onChange: (v: string) => {
         host.settings.set(tabKey, v);
         setTab(v);

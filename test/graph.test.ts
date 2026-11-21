@@ -7,7 +7,11 @@ import { AGX_DEFAULTS, type AgxParams } from "../src/agx/params";
 import { deriveFilmic } from "../src/filmic/derive";
 import { FILMIC_DEFAULTS, type FilmicParams } from "../src/filmic/params";
 import { FILMIC_DEFAULT_UNIFORMS } from "../src/filmic/transform";
-import { CurveGraph, agxGraph, boundUniforms, curvePoints, filmicGraph } from "../src/panel/Graph";
+import { encodeSrgb } from "../src/glsl/common";
+import { CurveGraph, agxGraph, boundUniforms, curvePoints, filmicGraph, sigmoidGraph } from "../src/panel/Graph";
+import { sigmoidData } from "../src/sigmoid/derive";
+import { MIDDLE_GREY, SIGMOID_DEFAULTS } from "../src/sigmoid/params";
+import { loglogistic } from "../src/sigmoid/twin";
 import { initRuntime } from "../src/runtime";
 import { fakeApi } from "./support/fake-api";
 
@@ -87,6 +91,25 @@ describe("graphs", () => {
   it("draw the default curve where AgX's curve uniforms are not finite", () => {
     expect(Object.values(deriveAgx(DEGENERATE_AGX)).flat().some((v) => !Number.isFinite(v))).toBe(true);
     expect(agxGraph(DEGENERATE_AGX)).toEqual(agxGraph(AGX_DEFAULTS));
+  });
+});
+
+describe("the Sigmoid graph", () => {
+  // x spans 16.5 EV, -10 to +6.5 around middle grey, as AgX's default range; y is the display value, sRGB-encoded.
+  it("puts middle grey on its curve, where the curve maps it to itself", () => {
+    const g = sigmoidGraph(SIGMOID_DEFAULTS);
+    expect(g.marker?.[0]).toBeCloseTo(10 / 16.5, 9);
+    expect(g.marker?.[1]).toBeCloseTo(encodeSrgb(MIDDLE_GREY), 6);
+  });
+
+  it("samples the curve the shader draws, over 16.5 EV", () => {
+    const p = { ...SIGMOID_DEFAULTS, contrast_skewness: 0.4, display_black_target: 2 };
+    const d = sigmoidData(p);
+    const g = sigmoidGraph(p);
+    expect(g.points).toHaveLength(65);
+    expect(g.points[0][1]).toBeCloseTo(encodeSrgb(loglogistic(MIDDLE_GREY * 2 ** -10, d)), 9);
+    expect(g.points[64][1]).toBeCloseTo(encodeSrgb(loglogistic(MIDDLE_GREY * 2 ** 6.5, d)), 9);
+    for (let i = 1; i < g.points.length; i++) expect(g.points[i][1]).toBeGreaterThan(g.points[i - 1][1]);
   });
 });
 

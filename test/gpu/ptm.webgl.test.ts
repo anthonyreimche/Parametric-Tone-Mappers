@@ -1,7 +1,7 @@
-// Both transforms on the real renderer. Run via `npm run test:gpu` (run.cjs
+// The three transforms on the real renderer. Run via `npm run test:gpu` (run.cjs
 // copies this file into a SafeLight checkout and runs it under its headless
 // Chromium + SwiftShader rig). What the CPU suite can't check:
-//  • both programs compile and link with the host's namespacing and derived
+//  • every program compiles and links with the host's namespacing and derived
 //    uniforms, beside the built-in stages, on process versions 2 and 3;
 //  • over a grid of settings, every patch of a test chart matches the twin.
 
@@ -22,6 +22,10 @@ import { FILMIC_DEFAULTS, type FilmicParams } from "@ptm/filmic/params";
 import { FILMIC_ID, filmicTransform } from "@ptm/filmic/transform";
 import { filmicPixel } from "@ptm/filmic/twin";
 import { encodeSrgb } from "@ptm/glsl/common";
+import { deriveSigmoid } from "@ptm/sigmoid/derive";
+import { SIGMOID_DEFAULTS, type SigmoidParams } from "@ptm/sigmoid/params";
+import { SIGMOID_ID, sigmoidTransform } from "@ptm/sigmoid/transform";
+import { sigmoidPixel } from "@ptm/sigmoid/twin";
 import type { Vec3 } from "@ptm/colour/mat3";
 
 const EXT = "parametric-tonemappers";
@@ -37,6 +41,7 @@ const AS_DRAWN = { encoding: "perceptual", primaries: "rec709" } as const;
 beforeAll(() => {
   registerPipeline(EXT, agxTransform());
   registerPipeline(EXT, filmicTransform());
+  registerPipeline(EXT, sigmoidTransform());
 });
 afterAll(() => unregisterExtension(EXT));
 
@@ -100,8 +105,29 @@ const FILMIC_CASES: [string, Partial<FilmicParams>][] = [
   ],
 ];
 
-describe("both transforms", () => {
-  it.each([AGX_ID, FILMIC_ID])("%s compiles beside the built-in stages", (id) => {
+const deg = (d: number): number => (d * Math.PI) / 180;
+const SMOOTH = { red_inset: 0.1, green_inset: 0.1, blue_inset: 0.15, red_rotation: deg(2), green_rotation: deg(-1), blue_rotation: deg(-3) };
+
+const SIGMOID_CASES: [string, Partial<SigmoidParams>][] = [
+  ["defaults", {}],
+  ["working-profile base", { base_primaries: 0, ...SMOOTH, hue_preservation: 0 }],
+  ["Display P3 base", { base_primaries: 2, ...SMOOTH, purity: 0.5 }],
+  ["Adobe RGB base", { base_primaries: 3, ...SMOOTH, hue_preservation: 40 }],
+  ["sRGB base", { base_primaries: 4, ...SMOOTH }],
+  ["hue twist kept", { hue_preservation: 0 }],
+  ["high contrast, shadows", { middle_grey_contrast: 4, contrast_skewness: -1 }],
+  ["highlights skew", { contrast_skewness: 1 }],
+  ["contrast 10", { middle_grey_contrast: 10 }],
+  ["faded", { display_black_target: 8, display_white_target: 60 }],
+  ["bright white", { display_white_target: 1600 }],
+  ["RGB ratio", { color_processing: 1 }],
+  ["RGB ratio, faded", { color_processing: 1, display_black_target: 4, display_white_target: 70 }],
+  ["RGB ratio, contrast 2.5", { color_processing: 1, middle_grey_contrast: 2.5, contrast_skewness: -0.6 }],
+  ["hard-end primaries", { red_inset: 0.9, green_inset: 0.6, blue_inset: 0.9, red_rotation: 0.4, green_rotation: -0.4, blue_rotation: 0.25, purity: 0.7 }],
+];
+
+describe("every transform", () => {
+  it.each([AGX_ID, FILMIC_ID, SIGMOID_ID])("%s compiles beside the built-in stages", (id) => {
     expect(rendererBuildError({ stages: builtinStages(), pipeline: resolvePipelineFor(id), processVersionCap: 3 })).toBeNull();
   });
 });
@@ -123,5 +149,16 @@ describe("Filmic on the GPU", () => {
     const u = deriveFilmic(params);
     const want = PATCHES.map((p) => encode3(filmicPixel(half3(p), u)));
     for (const version of [2, 3]) compare(`${label} v${version}`, render(FILMIC_ID, bagOf(FILMIC_ID, params), version), want, 1e-3);
+  });
+});
+
+describe("Sigmoid on the GPU", () => {
+  it.each(SIGMOID_CASES)("matches the twin: %s", (label, over) => {
+    const params = { ...SIGMOID_DEFAULTS, ...over };
+    const u = deriveSigmoid(params);
+    for (const version of [2, 3]) {
+      const want = PATCHES.map((p) => encode3(sigmoidPixel(half3(p), u, version)));
+      compare(`${label} v${version}`, render(SIGMOID_ID, bagOf(SIGMOID_ID, params), version), want, 5e-4);
+    }
   });
 });

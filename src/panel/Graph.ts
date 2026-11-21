@@ -1,8 +1,9 @@
 // Parametric Tone Mappers, a Safelight extension. GPL-3.0-or-later. See LICENSE.
 
 // The read-only curve view: AgX's curve before its look, in its log/gamma
-// space with the pivot, and filmic's spline in its log/power space with middle
-// grey, drawn from the same TypeScript twins the GPU tests check. Both are
+// space with the pivot, filmic's spline in its log/power space with middle
+// grey, and Sigmoid's curve over 16.5 EV with middle grey, sRGB-encoded,
+// drawn from the same TypeScript twins the GPU tests check. Both are
 // evaluated on the uniforms the core would bind, so the graph shows what renders.
 
 import type { ReactElement } from "react";
@@ -14,7 +15,12 @@ import { deriveFilmic } from "../filmic/derive";
 import type { FilmicParams } from "../filmic/params";
 import { FILMIC_DEFAULT_UNIFORMS } from "../filmic/transform";
 import { filmicSplineAt } from "../filmic/twin";
+import { encodeSrgb } from "../glsl/common";
 import { api, h } from "../runtime";
+import { curveOf, deriveSigmoid } from "../sigmoid/derive";
+import { MIDDLE_GREY, type SigmoidParams } from "../sigmoid/params";
+import { SIGMOID_DEFAULT_UNIFORMS } from "../sigmoid/transform";
+import { loglogistic } from "../sigmoid/twin";
 
 export interface GraphData {
   points: [number, number][];
@@ -58,6 +64,17 @@ export function filmicGraph(p: FilmicParams): GraphData {
   };
   const [, black, range] = u.fLog;
   const greyX = Math.abs(black) / range;
+  return { points: curvePoints(at), marker: [greyX, at(greyX)] };
+}
+
+// Sigmoid has no exposure range of its own; the graph spans AgX's default one, -10 to +6.5 EV around middle grey.
+const SIGMOID_BLACK_EV = -10;
+const SIGMOID_RANGE_EV = 16.5;
+
+export function sigmoidGraph(p: SigmoidParams): GraphData {
+  const c = curveOf(boundUniforms(() => deriveSigmoid(p), SIGMOID_DEFAULT_UNIFORMS));
+  const at = (x: number): number => encodeSrgb(loglogistic(MIDDLE_GREY * 2 ** (SIGMOID_BLACK_EV + x * SIGMOID_RANGE_EV), c));
+  const greyX = -SIGMOID_BLACK_EV / SIGMOID_RANGE_EV;
   return { points: curvePoints(at), marker: [greyX, at(greyX)] };
 }
 

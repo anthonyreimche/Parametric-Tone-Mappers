@@ -1,20 +1,24 @@
 // Parametric Tone Mappers, a Safelight extension. GPL-3.0-or-later. See LICENSE.
 //
-// The tabs, sections and controls of both panels. Labels, tooltips and soft
-// ranges are those of darktable's AgX gui_init (src/iop/agx.c L1817-2483) at
-// release-5.6.2 and Ansel's filmic rgb gui_init (src/iop/filmicrgb.c
-// L5417-5740) at 2fadf8a366, with the first letter capitalised. Upstream wraps
+// The tabs, sections and controls of the three panels. Labels, tooltips and
+// soft ranges are those of darktable's AgX gui_init (src/iop/agx.c
+// L1817-2483) and sigmoid gui_init (src/iop/sigmoid.c L887-975) at
+// release-5.6.2, and Ansel's filmic rgb gui_init (src/iop/filmicrgb.c
+// L5417-5740) at 2fadf8a366, with the first letter capitalised and "color"
+// spelt "colour". Upstream wraps
 // its tooltips with newlines; they are joined with a space here, except for
 // the heading line of the two power sliders. A slider's min and max are
 // upstream's soft range in display units (value * scale), so each sits inside
 // the param's hard range once divided by scale. The filmic tab tooltips and
 // the tooltip text marked "ours" are Safelight's own wording.
 // Copyright (C) 2025-2026 darktable developers (src/iop/agx.c).
+// Copyright (C) 2020-2026 darktable developers (src/iop/sigmoid.c).
 // Copyright (C) 2019-2020, 2022 Aldric Renaudin; 2019-2026 Aurélien PIERRE; 2019 Diederik ter Rahe; 2019-2022 Pascal Obry; 2019 Tobias Ellinghaus; 2020-2021 Chris Elston; 2020-2022 Diederik Ter Rahe; 2020 Heiko Bauke; 2020-2021 Hubert Kowalski; 2020 Jeronimo Pellegrini; 2020 Marco Carrarini; 2020 Mark-64; 2020 Martin Burri; 2020-2021 Ralf Brown; 2020-2021 rawfiner; 2021 Dan Torop; 2021 Fabio Heer; 2021 lhietal; 2021 luzpaz; 2021 paolodepetrillo; 2021-2022 Sakari Kapanen; 2021 Victor Forsiuk; 2022 Hanno Schwalm; 2022 Martin Bařinka; 2022 Nicolas Auffray; 2022 Philipp Lutz; 2023 Alban Gruin; 2023-2024 Alynx Zhou; 2023 Luca Zulberti; 2025 Guillaume Stutin (src/iop/filmicrgb.c).
 // GPL-3.0-or-later.
 
 import { AGX_BASE_PRIMARIES, type AgxParams } from "../agx/params";
 import { FILMIC_CURVES, FILMIC_VERSIONS, type FilmicParams } from "../filmic/params";
+import { PER_CHANNEL, SIGMOID_BASE_PRIMARIES, SIGMOID_METHODS, type SigmoidParams } from "../sigmoid/params";
 
 export type Unit = "" | "EV" | "%" | "°";
 export type ActionId = "agxAutoTune" | "agxReadExposure" | "agxSetFromAbove" | "filmicAutoTune";
@@ -47,6 +51,8 @@ export interface TabSpec<P> {
   label: string;
   tooltip: string;
   sections: readonly SectionSpec<P>[];
+  /** Shown only while this holds, as upstream hides the section the tab stands for. */
+  when?: (p: P) => boolean;
 }
 
 const PCT = 100;
@@ -59,6 +65,7 @@ function slider<P>(key: Key<P>, label: string, tooltip: string, min: number, max
 // A key alone can't tell TypeScript which params a slider belongs to.
 const agxSlider = slider<AgxParams>;
 const filmicSlider = slider<FilmicParams>;
+const sigmoidSlider = slider<SigmoidParams>;
 
 /** First letter capitalised, unless it starts a camel-case name such as sRGB. */
 function cap(s: string): string {
@@ -382,6 +389,106 @@ export const FILMIC_TABS: readonly TabSpec<FilmicParams>[] = [
             1, 50, 0.01, "%", 1, customGrey,
           ),
           filmicSlider("white_point_target", "Target white luminance", "Luminance of output pure white, this should be 100% except if you want a faded look", 0, 100, 0.01, "%"),
+        ],
+      },
+    ],
+  },
+];
+
+const perChannel = (p: SigmoidParams): boolean => p.color_processing === PER_CHANNEL;
+
+/** Attenuation and rotation for red, green and blue (SETUP_COLOR_COMBO,
+ *  sigmoid.c L924-946); each resets to 0, its $DEFAULT. The rotations have no
+ *  soft range upstream; they span ±22.9°, just inside the hard ±0.4 rad
+ *  (±22.918°), as a range input steps from its min and 0° must be on a step. */
+const sigmoidPrimaryRows = (["red", "green", "blue"] as const).flatMap((c): Control<SigmoidParams>[] => [
+  sigmoidSlider(`${c}_inset`, `${cap(c)} attenuation`, `Attenuate the purity of the ${c} primary`, 0, 50, 0.1, "%", PCT),
+  sigmoidSlider(`${c}_rotation`, `${cap(c)} rotation`, `Rotate the ${c} primary`, -22.9, 22.9, 0.1, "°", DEG),
+]);
+
+export const SIGMOID_TABS: readonly TabSpec<SigmoidParams>[] = [
+  {
+    value: "settings",
+    label: "Settings",
+    // ours: upstream has no tabs
+    tooltip: "The curve, the colour processing and the display targets",
+    sections: [
+      {
+        title: "Curve",
+        controls: [
+          sigmoidSlider(
+            "middle_grey_contrast",
+            "Contrast",
+            "Compression of the applied curve implicitly defines the supported input dynamic range",
+            0.7, 3, 0.001,
+          ),
+          sigmoidSlider(
+            "contrast_skewness",
+            "Skew",
+            "Shift the compression towards shadows or highlights. negative values increase contrast in shadows. positive values increase contrast in highlights. the opposite end will see a reduction in contrast.",
+            -1, 1, 0.01,
+          ),
+        ],
+      },
+      {
+        title: "Colour",
+        controls: [
+          {
+            kind: "select",
+            key: "color_processing",
+            label: "Colour processing",
+            // ours: upstream has no tooltip here
+            tooltip: "Per channel tone maps red, green and blue apart, so bright colours bleach towards white; RGB ratio tone maps their average and keeps the ratios between them.",
+            options: SIGMOID_METHODS.map((name, v) => [v, cap(name)] as const),
+          },
+          sigmoidSlider(
+            "hue_preservation",
+            "Preserve hue",
+            "Optional correction of the hue twist introduced by the per-channel processing method.",
+            0, 100, 0.1, "%", 1, perChannel,
+          ),
+        ],
+      },
+      { title: "Show curve", collapsed: true, controls: [{ kind: "graph" }] },
+      {
+        title: "Display luminance",
+        collapsed: true,
+        controls: [
+          sigmoidSlider(
+            "display_black_target",
+            "Target black",
+            "The black luminance of the target display or print. can be used creatively for a faded look.",
+            0, 1, 0.0001, "%",
+          ),
+          sigmoidSlider(
+            "display_white_target",
+            "Target white",
+            "The white luminance of the target display or print. can be used creatively for a faded look or blowing out whites earlier.",
+            50, 100, 0.1, "%",
+          ),
+        ],
+      },
+    ],
+  },
+  {
+    value: "primaries",
+    label: "Primaries",
+    tooltip: "Set custom primaries",
+    when: perChannel,
+    sections: [
+      {
+        title: "Primaries",
+        controls: [
+          {
+            kind: "select",
+            key: "base_primaries",
+            label: "Base primaries",
+            // ours: the second sentence, as upstream's names a darktable module and Safelight's working space is linear Rec.709
+            tooltip: "Primaries to use as the base for below adjustments. Working profile follows the working space, linear Rec.709 (Rec.2020 on older version 1 edits).",
+            options: SIGMOID_BASE_PRIMARIES.map((name, v) => [v, cap(name)] as const),
+          },
+          ...sigmoidPrimaryRows,
+          sigmoidSlider("purity", "Recover purity", "Recover some of the original purity after the inset", 0, 100, 1, "%", PCT),
         ],
       },
     ],

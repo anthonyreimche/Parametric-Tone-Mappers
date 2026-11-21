@@ -15,10 +15,12 @@ const VECTORS: Readonly<Record<GlslType, number>> = {
 };
 
 describe("activate", () => {
-  it("registers both transforms and the Tone mapper panel", () => {
+  it("registers the three transforms and the Tone mapper panel", () => {
     const rig = fakeApi();
     activate(rig.api);
-    expect(rig.pipelines.map((c) => c.id)).toEqual(["parametric-tonemappers.agx", "parametric-tonemappers.filmic"]);
+    expect(rig.pipelines.map((c) => c.id)).toEqual([
+      "parametric-tonemappers.agx", "parametric-tonemappers.filmic", "parametric-tonemappers.sigmoid",
+    ]);
     expect(rig.panels.map((p) => [p.id, p.title])).toEqual([["parametric-tonemappers.panel", "Tone mapper"]]);
     expect(rig.panels[0].defaultDock).toEqual({ module: "develop", direction: "right", order: 4, width: 268 });
     expect(rig.panels[0].onReset).toBe(resetActive);

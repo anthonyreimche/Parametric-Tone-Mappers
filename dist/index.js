@@ -258,7 +258,7 @@ var k = O([
 		x: .15,
 		y: .06
 	}
-]), j = O([
+]), ne = O([
 	{
 		x: .64,
 		y: .33
@@ -271,7 +271,7 @@ var k = O([
 		x: .15,
 		y: .06
 	}
-]), M = O([
+]), j = O([
 	{
 		x: .64,
 		y: .33
@@ -284,17 +284,13 @@ var k = O([
 		x: .15,
 		y: .06
 	}
-]), ne = p(k.fromXyz, M.toXyz);
-g(ne);
-//#endregion
-//#region src/agx/derive.ts
-var N = 1e-6, re = 2.2, ie = 1e9, ae = 34028234663852886e22, oe = 1.1920928955078125e-7, P = [
+]), M = p(k.fromXyz, j.toXyz), re = g(M), N = 1e-6, ie = 2.2, ae = 1e9, oe = 34028234663852886e22, se = 1.1920928955078125e-7, P = [
 	0,
 	0,
 	0
-], se = (e, t, n) => Math.min(ie, t / e ** +n), ce = (e, t) => c(e.curve_pivot_y_linear_output, e.curve_target_display_black_ratio, e.curve_target_display_white_ratio) ** (1 / t);
-function le(e) {
-	let t = e.range_black_relative_ev, n = e.range_white_relative_ev - t, r = c(e.curve_pivot_x, N, .999999), i = Math.log2(e.curve_pivot_y_linear_output) / Math.log2(r), a = e.auto_gamma && i > 0 && Number.isFinite(i) ? i : e.curve_gamma, o = ce(e, a), s = e.curve_contrast_around_pivot * (n / 16.5) / (a * Math.max(N, o) ** (a - 1) / (re * Math.max(N, ce(e, re)) ** 1.2000000000000002)), l = e.curve_target_display_black_ratio ** (1 / a), d = Math.max(.01, e.curve_toe_power), f = (o - l) * e.curve_linear_ratio_below_pivot, p = Math.max(N, r - f / s), m = o - s * (r - p), h = -u(1, 1 - l, 1 - p, 1 - m, s, d), g = Math.max(N, m - l), _ = s * p / g, v = e.curve_target_display_white_ratio ** (1 / a), y = (v - o) * e.curve_linear_ratio_above_pivot, b = Math.min(.999999, r + y / s), x = o + s * (b - r), S = Math.max(.01, e.curve_shoulder_power), C = Math.max(N, v - x), w = s * (1 - b) / C, T = e.look_brightness, E = e.look_slope / (1 + e.look_lift);
+], ce = (e, t, n) => Math.min(ae, t / e ** +n), le = (e, t) => c(e.curve_pivot_y_linear_output, e.curve_target_display_black_ratio, e.curve_target_display_white_ratio) ** (1 / t);
+function ue(e) {
+	let t = e.range_black_relative_ev, n = e.range_white_relative_ev - t, r = c(e.curve_pivot_x, N, .999999), i = Math.log2(e.curve_pivot_y_linear_output) / Math.log2(r), a = e.auto_gamma && i > 0 && Number.isFinite(i) ? i : e.curve_gamma, o = le(e, a), s = e.curve_contrast_around_pivot * (n / 16.5) / (a * Math.max(N, o) ** (a - 1) / (ie * Math.max(N, le(e, ie)) ** 1.2000000000000002)), l = e.curve_target_display_black_ratio ** (1 / a), d = Math.max(.01, e.curve_toe_power), f = (o - l) * e.curve_linear_ratio_below_pivot, p = Math.max(N, r - f / s), m = o - s * (r - p), h = -u(1, 1 - l, 1 - p, 1 - m, s, d), g = Math.max(N, m - l), _ = s * p / g, v = e.curve_target_display_white_ratio ** (1 / a), y = (v - o) * e.curve_linear_ratio_above_pivot, b = Math.min(.999999, r + y / s), x = o + s * (b - r), S = Math.max(.01, e.curve_shoulder_power), C = Math.max(N, v - x), w = s * (1 - b) / C, T = e.look_brightness, E = e.look_slope / (1 + e.look_lift);
 	return {
 		blackEv: t,
 		rangeEv: n,
@@ -311,14 +307,14 @@ function le(e) {
 		toePower: d,
 		needConvexToe: g / p > s,
 		toeFallbackPower: _,
-		toeFallbackCoeff: se(p, g, _),
+		toeFallbackCoeff: ce(p, g, _),
 		shTx: b,
 		shTy: x,
 		shScale: u(1, v, b, x, s, S),
 		shPower: S,
 		needConcaveShoulder: C / (1 - b) > s,
 		shFallbackPower: w,
-		shFallbackCoeff: se(1 - b, C, w),
+		shFallbackCoeff: ce(1 - b, C, w),
 		lookPower: T < 1 ? 1 / Math.sqrt(Math.max(T, N)) : 1 / T,
 		lookTuned: e.look_slope !== 1 || T !== 1 || e.look_lift !== 0 || e.look_saturation !== 1,
 		restoreHue: e.look_original_hue_mix_ratio !== 0,
@@ -326,11 +322,11 @@ function le(e) {
 		lookB: e.look_lift * E
 	};
 }
-function ue(e, t) {
-	return e === 3 ? A : e === 4 ? j : e === 5 ? M : e === 2 ? k : (t ?? 1) >= 2 ? M : k;
+function de(e, t) {
+	return e === 3 ? A : e === 4 ? ne : e === 5 ? j : e === 2 ? k : (t ?? 1) >= 2 ? j : k;
 }
-function de(e, t, n) {
-	let r = e.white.x, i = e.white.y, a = r + t, o = i + n, s = ae;
+function fe(e, t, n) {
+	let r = e.white.x, i = e.white.y, a = r + t, o = i + n, s = oe;
 	for (let t = 0; t < 3; t++) {
 		let n = e.primaries[t], c = e.primaries[(t + 1) % 3], l = (r - a) * (n.y - c.y) - (n.x - c.x) * (i - o);
 		if (l === 0) continue;
@@ -339,14 +335,14 @@ function de(e, t, n) {
 	}
 	return s;
 }
-function fe(e, t, n, r) {
-	let i = Math.atan2(e.primaries[r].y - e.white.y, e.primaries[r].x - e.white.x) + n, a = Math.cos(i), o = Math.sin(i), s = de(e, a, o);
+function F(e, t, n, r) {
+	let i = Math.atan2(e.primaries[r].y - e.white.y, e.primaries[r].x - e.white.x) + n, a = Math.cos(i), o = Math.sin(i), s = fe(e, a, o);
 	return {
 		x: e.white.x + t * s * a,
 		y: e.white.y + t * s * o
 	};
 }
-var pe = (e) => e < oe && e >= 0 ? oe : e < 0 && e > -1.1920928955078125e-7 ? -1.1920928955078125e-7 : e;
+var pe = (e) => e < se && e >= 0 ? se : e < 0 && e > -1.1920928955078125e-7 ? -1.1920928955078125e-7 : e;
 function me(e, t) {
 	let n = (e) => {
 		let t = pe(e.y);
@@ -411,10 +407,10 @@ var ge = {
 	masterUnrotation: 1
 };
 function _e(e, t) {
-	let n = p(e.fromXyz, M.toXyz), r = (t, n) => me([
-		fe(e, t(0), n(0), 0),
-		fe(e, t(1), n(1), 1),
-		fe(e, t(2), n(2), 2)
+	let n = p(e.fromXyz, j.toXyz), r = (t, n) => me([
+		F(e, t(0), n(0), 0),
+		F(e, t(1), n(1), 1),
+		F(e, t(2), n(2), 2)
 	], e.white), i = r((e) => 1 - t.inset[e], (e) => t.rotation[e]), a = r((e) => 1 - t.masterOutset * t.outset[e], (e) => t.masterUnrotation * t.unrotation[e]), o = a && h(p(e.fromXyz, a));
 	return !i || !o ? null : {
 		pipeToBase: n,
@@ -424,7 +420,7 @@ function _e(e, t) {
 	};
 }
 function ve(e, t) {
-	let n = ue(e.base_primaries, t), r = _e(n, he(e)) ?? _e(n, ge);
+	let n = de(e.base_primaries, t), r = _e(n, he(e)) ?? _e(n, ge);
 	if (!r) throw Error("singular colour matrix");
 	return r;
 }
@@ -445,9 +441,9 @@ var ye = {
 	agxShFallback: "vec4",
 	agxLook: "vec4",
 	agxHue: "vec2"
-}, F = (e) => +!!e;
-function be(e) {
-	let t = le(e), n = ve(e, 2), r = ve(e, 1);
+}, be = (e) => +!!e;
+function xe(e) {
+	let t = ue(e), n = ve(e, 2), r = ve(e, 1);
 	return {
 		agxPipeToBase: S(n.pipeToBase),
 		agxBaseToRendering: S(n.baseToRendering),
@@ -461,7 +457,7 @@ function be(e) {
 			t.blackEv,
 			t.rangeEv,
 			t.gamma,
-			F(t.lookTuned)
+			be(t.lookTuned)
 		],
 		agxToe: [
 			t.toeTx,
@@ -482,13 +478,13 @@ function be(e) {
 			t.targetWhite
 		],
 		agxToeFallback: [
-			F(t.needConvexToe),
+			be(t.needConvexToe),
 			t.toeFallbackCoeff,
 			t.toeFallbackPower,
 			0
 		],
 		agxShFallback: [
-			F(t.needConcaveShoulder),
+			be(t.needConcaveShoulder),
 			t.shFallbackCoeff,
 			t.shFallbackPower,
 			0
@@ -499,19 +495,19 @@ function be(e) {
 			t.lookPower,
 			e.look_saturation
 		],
-		agxHue: [F(t.restoreHue), e.look_original_hue_mix_ratio]
+		agxHue: [be(t.restoreHue), e.look_original_hue_mix_ratio]
 	};
 }
 //#endregion
 //#region src/glsl/common.ts
-function xe(e) {
+function Se(e) {
 	let t = e.toPrecision(10);
 	return /[.e]/.test(t) ? t : `${t}.0`;
 }
-var Se = (e) => `vec3(${e.map(xe).join(", ")})`, I = (e) => `mat3(${S(e).map(xe).join(", ")})`, Ce = "vec3 ptmEncode(vec3 x) {\n  vec3 a = abs(x);\n  vec3 e = mix(a * 12.92, 1.055 * pow(a, vec3(1.0 / 2.4)) - 0.055, greaterThanEqual(a, vec3(0.0031308)));\n  return sign(x) * e;\n}", we = "vec3 ptmSanitise(vec3 c) {\n  return vec3(\n    isnan(c.r) ? 0.0 : clamp(c.r, -1.0e6, 1.0e6),\n    isnan(c.g) ? 0.0 : clamp(c.g, -1.0e6, 1.0e6),\n    isnan(c.b) ? 0.0 : clamp(c.b, -1.0e6, 1.0e6));\n}";
-function Te(e, t) {
+var Ce = (e) => `vec3(${e.map(Se).join(", ")})`, I = (e) => `mat3(${S(e).map(Se).join(", ")})`, we = "vec3 ptmEncode(vec3 x) {\n  vec3 a = abs(x);\n  vec3 e = mix(a * 12.92, 1.055 * pow(a, vec3(1.0 / 2.4)) - 0.055, greaterThanEqual(a, vec3(0.0031308)));\n  return sign(x) * e;\n}", Te = "vec3 ptmSanitise(vec3 c) {\n  return vec3(\n    isnan(c.r) ? 0.0 : clamp(c.r, -1.0e6, 1.0e6),\n    isnan(c.g) ? 0.0 : clamp(c.g, -1.0e6, 1.0e6),\n    isnan(c.b) ? 0.0 : clamp(c.b, -1.0e6, 1.0e6));\n}";
+function Ee(e, t) {
 	return `vec3 ${e}(vec3 p) {
-  vec3 k = ${Se(t)};
+  vec3 k = ${Ce(t)};
   float inputY = dot(p, k);
   float mx = max(p.r, max(p.g, p.b));
   vec3 opp = vec3(mx) - p;
@@ -525,11 +521,15 @@ function Te(e, t) {
   return ratio * q;
 }`;
 }
+function De(e) {
+	let t = Math.abs(e), n = t < .0031308 ? t * 12.92 : 1.055 * t ** (1 / 2.4) - .055;
+	return Math.sign(e) * n;
+}
 //#endregion
 //#region src/agx/glsl.ts
-var Ee = `${we}
-${Ce}
-${Te("agxCompress", [
+var Oe = `${Te}
+${we}
+${Ee("agxCompress", [
 	.2658180370250449,
 	.59846986045365,
 	.1357121025213052
@@ -620,7 +620,7 @@ vec3 agxToneMap(vec3 r) {
     return agxFromHsv(hsv);
   }
   return t;
-}`, De = "vec3 pipelineToDisplay(vec3 lin) {\n  bool v2 = agxV2();\n  vec3 base = agxCompress((v2 ? agxPipeToBase : agxPipeToBaseV1) * ptmSanitise(lin));\n  vec3 r = agxToneMap((v2 ? agxBaseToRendering : agxBaseToRenderingV1) * base);\n  return ptmEncode((v2 ? agxRenderingToPipe : agxRenderingToPipeV1) * r);\n}", L = {
+}`, ke = "vec3 pipelineToDisplay(vec3 lin) {\n  bool v2 = agxV2();\n  vec3 base = agxCompress((v2 ? agxPipeToBase : agxPipeToBaseV1) * ptmSanitise(lin));\n  vec3 r = agxToneMap((v2 ? agxBaseToRendering : agxBaseToRenderingV1) * base);\n  return ptmEncode((v2 ? agxRenderingToPipe : agxRenderingToPipeV1) * r);\n}", L = {
 	look_lift: {
 		type: "float",
 		default: 0,
@@ -867,33 +867,33 @@ vec3 agxToneMap(vec3 r) {
 		default: !1,
 		label: "reverse all"
 	}
-}, Oe = r(L), ke = [
+}, Ae = r(L), je = [
 	"export profile",
 	"working profile",
 	"Rec2020",
 	"Display P3",
 	"Adobe RGB (compatible)",
 	"sRGB"
-], Ae = "parametric-tonemappers.agx", je = be(Oe);
-function Me() {
+], Me = "parametric-tonemappers.agx", Ne = xe(Ae);
+function Pe() {
 	return {
-		id: Ae,
+		id: Me,
 		name: "AgX (parametric)",
 		description: "AgX: a log encoding over a white and black exposure range, a contrast curve with tunable toe and shoulder, and primaries rotated and attenuated around it so bright colours bleach to white.",
-		glsl: De,
-		helpers: Ee,
+		glsl: ke,
+		helpers: Oe,
 		skipBaseCurve: !0,
 		skipToneShoulder: !0,
 		params: e(L),
 		derive: {
-			uniforms: i(ye, je),
-			fn: (e) => be(n(L, e))
+			uniforms: i(ye, Ne),
+			fn: (e) => xe(n(L, e))
 		}
 	};
 }
 //#endregion
 //#region src/colour/yrg.ts
-var Ne = [
+var Fe = [
 	.989466254,
 	-.0400304626,
 	.0440530317,
@@ -903,7 +903,7 @@ var Ne = [
 	-.000403920992,
 	.015076803,
 	1.30210211
-], Pe = [
+], Ie = [
 	1.01085433,
 	.0407086103,
 	-.0341445825,
@@ -913,7 +913,7 @@ var Ne = [
 	.000250722468,
 	-.0114918759,
 	.767964947
-], Fe = [
+], Le = [
 	.257085,
 	.859943,
 	-.031061,
@@ -923,7 +923,7 @@ var Ne = [
 	.064856,
 	-.07625,
 	.559067
-], Ie = [
+], Re = [
 	1.80794659,
 	-1.2997166,
 	.34785879,
@@ -933,7 +933,7 @@ var Ne = [
 	-.1254696,
 	.20478038,
 	1.74274183
-], Le = [
+], ze = [
 	.95,
 	.38,
 	0,
@@ -943,7 +943,7 @@ var Ne = [
 	0,
 	0,
 	.97
-], Re = [
+], Be = [
 	1.0877193,
 	-.66666667,
 	.02061856,
@@ -954,8 +954,8 @@ var Ne = [
 	0,
 	1.03092784
 ];
-function ze(e) {
-	let t = .68990272 * e[0] + .34832189 * e[1], n = e[0] + e[1] + e[2], r = m(Re, n === 0 ? [
+function Ve(e) {
+	let t = .68990272 * e[0] + .34832189 * e[1], n = e[0] + e[1] + e[2], r = m(Be, n === 0 ? [
 		0,
 		0,
 		0
@@ -970,8 +970,8 @@ function ze(e) {
 		r[1]
 	];
 }
-function Be(e) {
-	let t = m(Le, [
+function He(e) {
+	let t = m(ze, [
 		e[1],
 		e[2],
 		1 - e[1] - e[2]
@@ -982,7 +982,7 @@ function Be(e) {
 		t[2] * r
 	];
 }
-var Ve = (e) => ze(m(Fe, m(Ne, e))), He = (e) => m(Pe, m(Ie, Be(e))), Ue = 2.45, We = -9.55, Ge = Math.log(.1845) / Math.log(9.55 / 12), R = {
+var Ue = (e) => Ve(m(Le, m(Fe, e))), We = (e) => m(Ie, m(Re, He(e))), Ge = 2.45, Ke = -9.55, qe = Math.log(.1845) / Math.log(9.55 / 12), R = {
 	grey_point_source: {
 		type: "float",
 		default: 18.45,
@@ -992,14 +992,14 @@ var Ve = (e) => ze(m(Fe, m(Ne, e))), He = (e) => m(Pe, m(Ie, Be(e))), Ue = 2.45,
 	},
 	black_point_source: {
 		type: "float",
-		default: We,
+		default: Ke,
 		min: -16,
 		max: -.1,
 		label: "black relative exposure"
 	},
 	white_point_source: {
 		type: "float",
-		default: Ue,
+		default: Ge,
 		min: .1,
 		max: 16,
 		label: "white relative exposure"
@@ -1034,7 +1034,7 @@ var Ve = (e) => ze(m(Fe, m(Ne, e))), He = (e) => m(Pe, m(Ie, Be(e))), Ue = 2.45,
 	},
 	output_power: {
 		type: "float",
-		default: Ge,
+		default: qe,
 		min: 1,
 		max: 10,
 		label: "hardness"
@@ -1098,23 +1098,23 @@ var Ve = (e) => ze(m(Fe, m(Ne, e))), He = (e) => m(Pe, m(Ie, Be(e))), Ue = 2.45,
 		max: 3,
 		label: "contrast in highlights"
 	}
-}, Ke = r(R), qe = {
+}, Je = r(R), Ye = {
 	5: "v8 (AgX, no bleach)",
 	6: "v8 (AgX, low bleach)",
 	7: "v8 (AgX, medium bleach)",
 	8: "v8 (AgX, high bleach)",
 	9: "v8 (AgX, extra bleach)"
-}, Je = [
+}, Xe = [
 	"hard",
 	"soft",
 	"safe",
 	"perceptual"
-], Ye = .01, Xe = 1.5, z = (e, t, n) => e > n ? n : e < t ? t : e;
+], Ze = .01, Qe = 1.5, z = (e, t, n) => e > n ? n : e < t ? t : e;
 function B(e) {
 	return e.auto_hardness ? Math.log(e.grey_point_target / 100) / Math.log(-e.black_point_source / (e.white_point_source - e.black_point_source)) : e.output_power;
 }
-function Ze(e, t) {
-	let n = e.custom_grey ? (z(e.grey_point_target, e.black_point_target, e.white_point_target) / 100) ** (1 / t) : .1845 ** (1 / t), r = e.white_point_source - e.black_point_source, i = Math.abs(e.black_point_source) / r, a = (z(e.black_point_target, 0, e.grey_point_target) / 100) ** (1 / t), o = (Math.max(e.white_point_target, e.grey_point_target) / 100) ** (1 / t), s = e.contrast * r / 8, c = Math.max(1, (o - n) / (1 - i), (n - a) / i) + Ye, l = z(s / (t * n ** (t - 1)), c, 100), u = n - l * i, d = Ye * (o - a);
+function $e(e, t) {
+	let n = e.custom_grey ? (z(e.grey_point_target, e.black_point_target, e.white_point_target) / 100) ** (1 / t) : .1845 ** (1 / t), r = e.white_point_source - e.black_point_source, i = Math.abs(e.black_point_source) / r, a = (z(e.black_point_target, 0, e.grey_point_target) / 100) ** (1 / t), o = (Math.max(e.white_point_target, e.grey_point_target) / 100) ** (1 / t), s = e.contrast * r / 8, c = Math.max(1, (o - n) / (1 - i), (n - a) / i) + Ze, l = z(s / (t * n ** (t - 1)), c, 100), u = n - l * i, d = Ze * (o - a);
 	return {
 		greyDisplay: n,
 		blackDisplay: a,
@@ -1126,8 +1126,8 @@ function Ze(e, t) {
 		xmax: (o - d - u) / l
 	};
 }
-function Qe(e, t) {
-	let { greyDisplay: n, blackDisplay: r, whiteDisplay: i, greyLog: a, contrast: o, intercept: s, xmin: c, xmax: l } = Ze(e, t), f = z(e.latitude, 0, 100) / 100, p = z(e.balance, -50, 50) / 100, m = (1 - f) * a + f * c, h = (1 - f) * a + f * l, g = p > 0 ? 2 * p * (h - a) : 2 * p * (a - m);
+function et(e, t) {
+	let { greyDisplay: n, blackDisplay: r, whiteDisplay: i, greyLog: a, contrast: o, intercept: s, xmin: c, xmax: l } = $e(e, t), f = z(e.latitude, 0, 100) / 100, p = z(e.balance, -50, 50) / 100, m = (1 - f) * a + f * c, h = (1 - f) * a + f * l, g = p > 0 ? 2 * p * (h - a) : 2 * p * (a - m);
 	m = Math.max(m - g, c), h = Math.min(h - g, l);
 	let _ = m * o + s, v = h * o + s, y = [
 		0,
@@ -1166,7 +1166,7 @@ function Qe(e, t) {
 	let E = y[1];
 	if (e.shadows === 3) {
 		let e = Math.max(1e-6, y[1]), t = Math.max(1e-6, b[1] - b[0]);
-		x[0] = -u(1, 1 - b[0], 1 - y[1], 1 - b[1], o, Xe), S[0] = Xe, w[0] = o * e / t, C[0] = t / e ** +w[0], T[0] = +(t / e > o);
+		x[0] = -u(1, 1 - b[0], 1 - y[1], 1 - b[1], o, Qe), S[0] = Qe, w[0] = o * e / t, C[0] = t / e ** +w[0], T[0] = +(t / e > o);
 	} else if (e.shadows === 0) {
 		let [e, t, n, r, i] = d([
 			0,
@@ -1239,7 +1239,7 @@ function Qe(e, t) {
 			e,
 			0
 		];
-	} else [x[0], S[0], C[0]] = $e(y[1] - y[0], b[1] - b[0], o), w[0] = _;
+	} else [x[0], S[0], C[0]] = tt(y[1] - y[0], b[1] - b[0], o), w[0] = _;
 	let D = y[3];
 	if (e.highlights === 3) {
 		let e = Math.max(1e-6, 1 - y[3]), t = Math.max(1e-6, b[4] - b[3]);
@@ -1316,7 +1316,7 @@ function Qe(e, t) {
 			t,
 			e
 		];
-	} else [x[1], S[1], C[1]] = $e(y[4] - y[3], b[4] - b[3], o), w[1] = v;
+	} else [x[1], S[1], C[1]] = tt(y[4] - y[3], b[4] - b[3], o), w[1] = v;
 	return {
 		x: y,
 		y: b,
@@ -1332,7 +1332,7 @@ function Qe(e, t) {
 		intercept: s
 	};
 }
-function $e(e, t, n) {
+function tt(e, t, n) {
 	let r = n / (2 * t) + (Math.sqrt((e * n / t + 1) ** 2 - 4) - 1) / (2 * e), i = t / n * (r * e * e + e) / (r * e * e + e - t / n);
 	return [
 		i * n,
@@ -1340,7 +1340,7 @@ function $e(e, t, n) {
 		i
 	];
 }
-var et = {
+var nt = {
 	5: {
 		inset: [
 			.5991055,
@@ -1451,15 +1451,15 @@ var et = {
 			-.0971215
 		]
 	}
-}, tt = (e) => e === 5 || e === 6 || e === 7 || e === 8 || e === 9 ? et[e] : et[5];
-function nt(e, t, n) {
+}, rt = (e) => e === 5 || e === 6 || e === 7 || e === 8 || e === 9 ? nt[e] : nt[5];
+function it(e, t, n) {
 	let r = m(e.toXyz, [
 		1,
 		1,
 		1
-	]), i = Ve(r), a = (r) => {
-		let a = Ve(y(e.toXyz, r)), o = a[1] - i[1], s = a[2] - i[2], l = 1 - c(t[r], 0, .9), u = Math.cos(n[r]), d = Math.sin(n[r]);
-		return He([
+	]), i = Ue(r), a = (r) => {
+		let a = Ue(y(e.toXyz, r)), o = a[1] - i[1], s = a[2] - i[2], l = 1 - c(t[r], 0, .9), u = Math.cos(n[r]), d = Math.sin(n[r]);
+		return We([
 			a[0],
 			i[1] + l * (u * o - d * s),
 			i[2] + l * (d * o + u * s)
@@ -1473,12 +1473,12 @@ function nt(e, t, n) {
 	let l = m(s, r);
 	return p(e.fromXyz, v(x(o[0], l[0]), x(o[1], l[1]), x(o[2], l[2])));
 }
-function rt(e, t) {
-	let n = tt(e);
-	return t === "inset" ? nt(k, n.inset, n.rotation) : nt(k, n.outset, n.outsetRotation);
+function at(e, t) {
+	let n = rt(e);
+	return t === "inset" ? it(k, n.inset, n.rotation) : it(k, n.outset, n.outsetRotation);
 }
-function it(e) {
-	let t = rt(e, "inset"), n = rt(e, "outset"), r = n && h(n);
+function ot(e) {
+	let t = at(e, "inset"), n = at(e, "outset"), r = n && h(n);
 	return t && r ? {
 		inset: t,
 		outset: r
@@ -1487,7 +1487,7 @@ function it(e) {
 		outset: f
 	};
 }
-var at = {
+var st = {
 	fInset: "mat3",
 	fOutset: "mat3",
 	fM1: "vec4",
@@ -1498,9 +1498,9 @@ var at = {
 	fNodes: "vec4",
 	fLog: "vec4",
 	fDisplay: "vec4"
-}, ot = (e) => Number.isFinite(Math.fround(e)) ? e : NaN, V = (e) => e.map(ot);
-function st(e) {
-	let t = B(e), n = Qe(e, t), { inset: r, outset: i } = it(e.version), a = (e) => V([
+}, ct = (e) => Number.isFinite(Math.fround(e)) ? e : NaN, V = (e) => e.map(ct);
+function lt(e) {
+	let t = B(e), n = et(e, t), { inset: r, outset: i } = ot(e.version), a = (e) => V([
 		e[0],
 		e[1],
 		e[2],
@@ -1540,17 +1540,17 @@ function st(e) {
 }
 //#endregion
 //#region src/filmic/spaces.ts
-var ct = ne, lt = p(Fe, p(Ne, k.toXyz)), ut = p(Fe, p(Ne, M.toXyz)), dt = p(M.fromXyz, p(Pe, Ie)), ft = b(k.toXyz, 1), pt = `const mat3 PTM_F_PIPE = ${I(ct)};
-const mat3 PTM_F_PIPE_TO_LMS = ${I(lt)};
-const mat3 PTM_F_EXPORT_INPUT = ${I(ut)};
-const mat3 PTM_F_EXPORT_OUTPUT = ${I(dt)};
-const mat3 PTM_F_LMS_TO_FILMLIGHT = ${I(Re)};
-const mat3 PTM_F_FILMLIGHT_TO_LMS = ${I(Le)};
+var ut = M, dt = p(Le, p(Fe, k.toXyz)), ft = p(Le, p(Fe, j.toXyz)), pt = p(j.fromXyz, p(Ie, Re)), mt = b(k.toXyz, 1), ht = `const mat3 PTM_F_PIPE = ${I(ut)};
+const mat3 PTM_F_PIPE_TO_LMS = ${I(dt)};
+const mat3 PTM_F_EXPORT_INPUT = ${I(ft)};
+const mat3 PTM_F_EXPORT_OUTPUT = ${I(pt)};
+const mat3 PTM_F_LMS_TO_FILMLIGHT = ${I(Be)};
+const mat3 PTM_F_FILMLIGHT_TO_LMS = ${I(ze)};
 const float PTM_F_FLT_MAX = 3.402823466e38;
 const float PTM_F_Y2006 = 1.05785528;
+${Te}
 ${we}
-${Ce}
-${Te("fCompress", ft)}
+${Ee("fCompress", mt)}
 vec3 fLmsToYrg(vec3 lms) {
   float Y = 0.68990272 * lms.x + 0.34832189 * lms.y;
   float a = lms.x + lms.y + lms.z;
@@ -1641,30 +1641,30 @@ vec3 fCheckRgb(vec4 f, float dBlack, float dWhite) {
     c = min(c, min(fClipBlack(k, f.z, f.w), fClipWhite(k, dWhite, Y, f.z, f.w)));
   }
   return min(max(fFromYch(vec4(Y, c, f.z, f.w), PTM_F_EXPORT_OUTPUT), 0.0), dWhite);
-}`, mt = "vec3 pipelineToDisplay(vec3 lin) {\n  vec3 compressed = fCompress(ptmSanitise(PTM_F_PIPE * lin));\n  vec4 o = fToYch(compressed, PTM_F_PIPE_TO_LMS);\n  vec3 t = fInset * compressed;\n  vec3 rendered = fOutset * vec3(fToneOne(t.r), fToneOne(t.g), fToneOne(t.b));\n  vec4 f = fToYch(rendered, PTM_F_PIPE_TO_LMS);\n  float chroma = min(o.y, f.y);\n  float beta = fLog.w;\n  float rMix = beta * o.y * o.z + (1.0 - beta) * chroma * f.z;\n  float gMix = beta * o.y * o.w + (1.0 - beta) * chroma * f.w;\n  float n = length(vec2(gMix, rMix));\n  vec4 ref = vec4(o.x, o.y, n > 1.0e-9 ? rMix / n : o.z, n > 1.0e-9 ? gMix / n : o.w);\n  f = vec4(min(max(f.x, PTM_F_Y2006 * fDisplay.x), PTM_F_Y2006 * fDisplay.y), chroma, ref.z, ref.w);\n  float co = ref.y * ref.x;\n  float cf = f.y * f.x;\n  if (f.x > ref.x && co < cf) cf = (co + cf) / 2.0;\n  f.y = f.x > 0.0 ? max(cf / f.x, 0.0) : (cf > 0.0 ? PTM_F_FLT_MAX : 0.0);\n  float r = f.y * f.z + 0.21902143;\n  float g = f.y * f.w + 0.54371398;\n  float maxC = f.y;\n  if (r < 0.0) maxC = min(-0.21902143 / f.z, maxC);\n  if (g < 0.0) maxC = min(-0.54371398 / f.w, maxC);\n  if (r + g > 1.0) maxC = min((1.0 - 0.21902143 - 0.54371398) / (f.z + f.w), maxC);\n  f.y = maxC;\n  return ptmEncode(fCheckRgb(f, fDisplay.x, fDisplay.y));\n}", ht = "parametric-tonemappers.filmic", gt = st(Ke);
-function _t() {
+}`, gt = "vec3 pipelineToDisplay(vec3 lin) {\n  vec3 compressed = fCompress(ptmSanitise(PTM_F_PIPE * lin));\n  vec4 o = fToYch(compressed, PTM_F_PIPE_TO_LMS);\n  vec3 t = fInset * compressed;\n  vec3 rendered = fOutset * vec3(fToneOne(t.r), fToneOne(t.g), fToneOne(t.b));\n  vec4 f = fToYch(rendered, PTM_F_PIPE_TO_LMS);\n  float chroma = min(o.y, f.y);\n  float beta = fLog.w;\n  float rMix = beta * o.y * o.z + (1.0 - beta) * chroma * f.z;\n  float gMix = beta * o.y * o.w + (1.0 - beta) * chroma * f.w;\n  float n = length(vec2(gMix, rMix));\n  vec4 ref = vec4(o.x, o.y, n > 1.0e-9 ? rMix / n : o.z, n > 1.0e-9 ? gMix / n : o.w);\n  f = vec4(min(max(f.x, PTM_F_Y2006 * fDisplay.x), PTM_F_Y2006 * fDisplay.y), chroma, ref.z, ref.w);\n  float co = ref.y * ref.x;\n  float cf = f.y * f.x;\n  if (f.x > ref.x && co < cf) cf = (co + cf) / 2.0;\n  f.y = f.x > 0.0 ? max(cf / f.x, 0.0) : (cf > 0.0 ? PTM_F_FLT_MAX : 0.0);\n  float r = f.y * f.z + 0.21902143;\n  float g = f.y * f.w + 0.54371398;\n  float maxC = f.y;\n  if (r < 0.0) maxC = min(-0.21902143 / f.z, maxC);\n  if (g < 0.0) maxC = min(-0.54371398 / f.w, maxC);\n  if (r + g > 1.0) maxC = min((1.0 - 0.21902143 - 0.54371398) / (f.z + f.w), maxC);\n  f.y = maxC;\n  return ptmEncode(fCheckRgb(f, fDisplay.x, fDisplay.y));\n}", _t = "parametric-tonemappers.filmic", vt = lt(Je);
+function yt() {
 	return {
-		id: ht,
+		id: _t,
 		name: "Filmic RGB (parametric)",
 		description: "Filmic RGB, colour science v8: a log encoding over a white and black exposure range, an S curve with latitude and a perceptual toe and shoulder, rendered per channel inside a bracket of displaced primaries so bright colours bleach toward white, then gamut-mapped into sRGB.",
-		glsl: mt,
-		helpers: pt,
+		glsl: gt,
+		helpers: ht,
 		skipBaseCurve: !0,
 		skipToneShoulder: !0,
 		params: e(R),
 		derive: {
-			uniforms: i(at, gt),
-			fn: (e) => st(n(R, e))
+			uniforms: i(st, vt),
+			fn: (e) => lt(n(R, e))
 		}
 	};
 }
 //#endregion
 //#region src/panel/model.ts
-var vt = 1e-6, yt = (e) => e.range_black_relative_ev + e.curve_pivot_x * (e.range_white_relative_ev - e.range_black_relative_ev);
-function bt(e, t) {
+var bt = 1e-6, xt = (e) => e.range_black_relative_ev + e.curve_pivot_x * (e.range_white_relative_ev - e.range_black_relative_ev);
+function St(e, t) {
 	return (c(t, e.black, e.white) - e.black) / (e.white - e.black);
 }
-function xt(e, t) {
+function Ct(e, t) {
 	let n = { ...t }, r = t.dynamic_range_scaling;
 	if (r !== void 0 && r !== e.dynamic_range_scaling) {
 		let t = (r - e.dynamic_range_scaling) / (e.dynamic_range_scaling + 1);
@@ -1674,21 +1674,21 @@ function xt(e, t) {
 		}));
 	}
 	let i = n.range_black_relative_ev ?? e.range_black_relative_ev, o = n.range_white_relative_ev ?? e.range_white_relative_ev;
-	(i !== e.range_black_relative_ev || o !== e.range_white_relative_ev) && t.curve_pivot_x === void 0 && (n.curve_pivot_x = bt({
+	(i !== e.range_black_relative_ev || o !== e.range_white_relative_ev) && t.curve_pivot_x === void 0 && (n.curve_pivot_x = St({
 		black: i,
 		white: o
-	}, yt(e)));
+	}, xt(e)));
 	let s = {
 		...e,
 		...n
 	};
 	if (s.auto_gamma && s.curve_pivot_y_linear_output > 0) {
-		let e = c(s.curve_pivot_x, vt, .999999);
+		let e = c(s.curve_pivot_x, bt, .999999);
 		n.curve_gamma = Math.log2(s.curve_pivot_y_linear_output) / Math.log2(e);
 	}
 	return n;
 }
-var St = (e) => ({
+var wt = (e) => ({
 	master_outset_ratio: 1,
 	master_unrotation_ratio: 1,
 	red_outset: e.red_inset,
@@ -1697,18 +1697,18 @@ var St = (e) => ({
 	red_unrotation: e.red_rotation,
 	green_unrotation: e.green_rotation,
 	blue_unrotation: e.blue_rotation
-}), Ct = (e, t) => Number.isNaN(e) ? t : Number.isNaN(t) ? e : Math.max(e, t), wt = (e, t) => Number.isNaN(e) ? t : Number.isNaN(t) ? e : Math.min(e, t);
-function Tt(e) {
-	let t = Ze(e, B(e));
+}), Tt = (e, t) => Number.isNaN(e) ? t : Number.isNaN(t) ? e : Math.max(e, t), Et = (e, t) => Number.isNaN(e) ? t : Number.isNaN(t) ? e : Math.min(e, t);
+function Dt(e) {
+	let t = $e(e, B(e));
 	return {
 		g: t,
-		toeSpan: Ct(t.greyLog - t.xmin, 1e-6),
-		shoulderSpan: Ct(t.xmax - t.greyLog, 1e-6)
+		toeSpan: Tt(t.greyLog - t.xmin, 1e-6),
+		shoulderSpan: Tt(t.xmax - t.greyLog, 1e-6)
 	};
 }
-function Et(e) {
-	let { g: t, toeSpan: n, shoulderSpan: r } = Tt(e), i = c(e.latitude, 0, 100) / 100, a = c(e.balance, -50, 50) / 100, o = (1 - i) * t.greyLog + i * t.xmin, s = (1 - i) * t.greyLog + i * t.xmax, l = a > 0 ? 2 * a * (s - t.greyLog) : 2 * a * (t.greyLog - o);
-	o = Ct(o - l, t.xmin), s = wt(s - l, t.xmax);
+function Ot(e) {
+	let { g: t, toeSpan: n, shoulderSpan: r } = Dt(e), i = c(e.latitude, 0, 100) / 100, a = c(e.balance, -50, 50) / 100, o = (1 - i) * t.greyLog + i * t.xmin, s = (1 - i) * t.greyLog + i * t.xmax, l = a > 0 ? 2 * a * (s - t.greyLog) : 2 * a * (t.greyLog - o);
+	o = Tt(o - l, t.xmin), s = Et(s - l, t.xmax);
 	let u = c((t.greyLog - o) / n, 0, 1) * 100, d = c((s - t.greyLog) / r, 0, 1) * 100;
 	if (Number.isFinite(u) && Number.isFinite(d)) return {
 		toe: u,
@@ -1720,8 +1720,8 @@ function Et(e) {
 		shoulder: f
 	};
 }
-function Dt(e, t, n) {
-	let { toeSpan: r, shoulderSpan: i } = Tt(e), a = c(t, 0, 100) / 100, o = c(n, 0, 100) / 100, s = c((r * a + i * o) / (r + i), 0, 1), l = 0;
+function kt(e, t, n) {
+	let { toeSpan: r, shoulderSpan: i } = Dt(e), a = c(t, 0, 100) / 100, o = c(n, 0, 100) / 100, s = c((r * a + i * o) / (r + i), 0, 1), l = 0;
 	s > 1e-6 && (a > o ? l = .5 * (1 - o / s) : o > a && (l = .5 * (a / s - 1)));
 	let u = {
 		latitude: s * 100,
@@ -1732,35 +1732,35 @@ function Dt(e, t, n) {
 		balance: e.balance
 	};
 }
-var Ot = [
+var At = [
 	"security_factor",
 	"grey_point_source",
 	"black_point_source",
 	"white_point_source",
 	"auto_hardness"
-], kt = (e, t) => a(R, {
+], jt = (e, t) => a(R, {
 	black_point_source: e,
 	white_point_source: t
 });
-function At(e, t) {
+function Mt(e, t) {
 	let n = { ...t };
 	if (t.security_factor !== void 0 && t.security_factor !== e.security_factor) {
 		let r = (t.security_factor - e.security_factor) / (e.security_factor + 100);
-		Object.assign(n, kt(e.black_point_source + r * e.black_point_source, e.white_point_source + r * e.white_point_source));
+		Object.assign(n, jt(e.black_point_source + r * e.black_point_source, e.white_point_source + r * e.white_point_source));
 	}
 	if (t.grey_point_source !== void 0 && t.grey_point_source !== e.grey_point_source) {
 		let r = Math.log2(e.grey_point_source / t.grey_point_source);
-		Object.assign(n, kt(e.black_point_source - r, e.white_point_source + r));
+		Object.assign(n, jt(e.black_point_source - r, e.white_point_source + r));
 	}
 	let r = {
 		...e,
 		...n
 	};
-	return r.auto_hardness && Ot.some((e) => t[e] !== void 0) ? n.output_power = c(B(r), 1, 10) : e.auto_hardness && t.auto_hardness === !1 && t.output_power === void 0 && (n.output_power = c(B(e), 1, 10)), n;
+	return r.auto_hardness && At.some((e) => t[e] !== void 0) ? n.output_power = c(B(r), 1, 10) : e.auto_hardness && t.auto_hardness === !1 && t.output_power === void 0 && (n.output_power = c(B(e), 1, 10)), n;
 }
 //#endregion
 //#region src/autotune.ts
-function jt(e) {
+function Nt(e) {
 	let { data: t } = e, n = [
 		Infinity,
 		Infinity,
@@ -1802,26 +1802,26 @@ function jt(e) {
 		]
 	};
 }
-var Mt = 1e-6, H = (e, t, n) => e >= t ? e <= n ? e : n : t;
-function Nt(e, t, n) {
+var Pt = 1e-6, Ft = (e, t, n) => e >= t ? e <= n ? e : n : t;
+function It(e, t, n) {
 	return {
 		range_black_relative_ev: t,
 		range_white_relative_ev: n,
-		curve_pivot_x: bt({
+		curve_pivot_x: St({
 			black: t,
 			white: n
-		}, yt(e))
+		}, xt(e))
 	};
 }
-function Pt(e, t) {
+function Lt(e, t) {
 	let n = 1 + e.dynamic_range_scaling;
-	return Nt(e, H(Math.log2(Math.max(Mt, Math.min(...t.min)) / .18) * n, -20, -.1), H(Math.log2(Math.max(Mt, Math.max(...t.max)) / .18) * n, .1, 20));
+	return It(e, Ft(Math.log2(Math.max(Pt, Math.min(...t.min)) / .18) * n, -20, -.1), Ft(Math.log2(Math.max(Pt, Math.max(...t.max)) / .18) * n, .1, 20));
 }
-function Ft(e, t) {
+function Rt(e, t) {
 	let n = 1 + e.dynamic_range_scaling;
-	return Nt(e, H((-8 + .5 * t) * n, -20, -.1), H((4 + .8 * t) * n, .1, 20));
+	return It(e, Ft((-8 + .5 * t) * n, -20, -.1), Ft((4 + .8 * t) * n, .1, 20));
 }
-function It(e, t) {
+function zt(e, t) {
 	let n = {};
 	e.custom_grey && (n.grey_point_source = c(100 * Math.max(...t.mean) / 2, .001, 100));
 	let r = (n.grey_point_source ?? e.grey_point_source) / 100, i = 1 + e.security_factor / 100, o = c(Math.log2(Math.max(...t.max) / r), 1, 16), s = (Number.isNaN(o) ? 1 : o) * i, l = c(Math.log2(Math.max(...t.min) / r), -16, -1) * i, u = Number.isNaN(l) ? -16 : Math.max(l, -16), d = {
@@ -1841,35 +1841,350 @@ function It(e, t) {
 		})
 	};
 }
-var Lt = {
+var Bt = {
 	encoding: "linear",
 	primaries: "rec2020"
 };
-async function Rt(e) {
+async function Vt(e) {
 	if (!e.develop.captureFloatFrame) return "unsupported";
 	let t = e.stores.useDevelopStore.getState().params, n = await e.develop.captureFloatFrame(t, {
 		point: "scene",
-		space: Lt
+		space: Bt
 	});
-	return n ? n.point === "scene" ? jt(n) ?? "no frame" : "unsupported" : "no frame";
+	return n ? n.point === "scene" ? Nt(n) ?? "no frame" : "unsupported" : "no frame";
 }
 //#endregion
 //#region src/runtime.ts
-var zt = null;
-function Bt(e) {
-	zt = e;
+var Ht = null;
+function Ut(e) {
+	Ht = e;
 }
-function U() {
-	if (!zt) throw Error("[parametric-tonemappers] api() called before activate()");
-	return zt;
+function H() {
+	if (!Ht) throw Error("[parametric-tonemappers] api() called before activate()");
+	return Ht;
 }
-function W(e, t, ...n) {
-	return U().react.createElement(e, t, ...n);
+function U(e, t, ...n) {
+	return H().react.createElement(e, t, ...n);
+}
+//#endregion
+//#region src/sigmoid/params.ts
+var Wt = .1845, Gt = {
+	middle_grey_contrast: {
+		type: "float",
+		default: 1.5,
+		min: .1,
+		max: 10,
+		label: "contrast"
+	},
+	contrast_skewness: {
+		type: "float",
+		default: 0,
+		min: -1,
+		max: 1,
+		label: "skew"
+	},
+	display_white_target: {
+		type: "float",
+		default: 100,
+		min: 20,
+		max: 1600,
+		label: "target white"
+	},
+	display_black_target: {
+		type: "float",
+		default: .0152,
+		min: 0,
+		max: 15,
+		label: "target black"
+	},
+	color_processing: {
+		type: "int",
+		default: 0,
+		min: 0,
+		max: 1,
+		label: "color processing"
+	},
+	hue_preservation: {
+		type: "float",
+		default: 100,
+		min: 0,
+		max: 100,
+		label: "preserve hue"
+	},
+	red_inset: {
+		type: "float",
+		default: 0,
+		min: 0,
+		max: .99,
+		label: "red attenuation"
+	},
+	red_rotation: {
+		type: "float",
+		default: 0,
+		min: -.4,
+		max: .4,
+		label: "red rotation"
+	},
+	green_inset: {
+		type: "float",
+		default: 0,
+		min: 0,
+		max: .99,
+		label: "green attenuation"
+	},
+	green_rotation: {
+		type: "float",
+		default: 0,
+		min: -.4,
+		max: .4,
+		label: "green rotation"
+	},
+	blue_inset: {
+		type: "float",
+		default: 0,
+		min: 0,
+		max: .99,
+		label: "blue attenuation"
+	},
+	blue_rotation: {
+		type: "float",
+		default: 0,
+		min: -.4,
+		max: .4,
+		label: "blue rotation"
+	},
+	purity: {
+		type: "float",
+		default: 0,
+		min: 0,
+		max: 1,
+		label: "recover purity"
+	},
+	base_primaries: {
+		type: "int",
+		default: 1,
+		min: 0,
+		max: 4,
+		label: "base primaries"
+	}
+}, Kt = r(Gt), qt = ["per channel", "RGB ratio"], Jt = [
+	"working profile",
+	"Rec2020",
+	"Display P3",
+	"Adobe RGB (compatible)",
+	"sRGB"
+], W = Math.fround, G = (e, t) => W(W(e) ** +W(t)), Yt = (e, t) => Number.isNaN(e) ? t : Number.isNaN(t) ? e : Math.max(e, t), Xt = (e, t) => Number.isNaN(e) ? t : Number.isNaN(t) ? e : Math.min(e, t);
+function Zt(e, t, n, r, i, a) {
+	let o = G(W(r + W(Yt(e, 0))), i), s = W(t * G(W(o / W(n + o)), a));
+	return Number.isNaN(s) ? t : s;
+}
+var Qt = (e, t, n, r, i) => {
+	let a = W(Wt), o = W(1e-6);
+	return W(W(W(Zt(W(a + o), e, t, n, r, i) - Zt(W(a - o), e, t, n, r, i)) / 2) / o);
+};
+function $t(e) {
+	let t = W(Wt), n = W(.01), r = W(e.middle_grey_contrast), i = Qt(1, W(G(W(0 + t), r) * W(W(1 / t) - 1)), 0, r, 1), a = G(5, W(-W(e.contrast_skewness))), o = W(n * W(e.display_white_target)), s = W(G(W(o / t), W(1 / a)) - 1), c = W(i / Qt(o, W(G(t, 1) * s), 0, 1, a)), l = W(n * W(e.display_white_target)), u = W(n * W(e.display_black_target)), d = W(G(W(l / t), W(1 / a)) - 1), f = W(G(W(u / l), W(-1 / a)) - 1), p = W(1 / c), m = W(W(t * G(d, p)) / W(G(f, p) - G(d, p)));
+	return {
+		whiteTarget: l,
+		blackTarget: u,
+		paperExposure: W(G(W(m + t), c) * d),
+		filmFog: m,
+		filmPower: c,
+		paperPower: a,
+		huePreservation: Xt(Yt(W(n * W(e.hue_preservation)), 0), 1)
+	};
+}
+function en(e, t) {
+	return e === 1 ? k : e === 2 ? A : e === 3 ? ne : e === 4 || (t ?? 1) >= 2 ? j : k;
+}
+var tn = (e, t, n) => me([
+	F(e, t(0), n[0], 0),
+	F(e, t(1), n[1], 1),
+	F(e, t(2), n[2], 2)
+], e.white);
+function nn(e, t, n, r, i) {
+	let a = tn(e, (e) => 1 - n[e], r), o = tn(e, (e) => 1 - i * n[e], r), s = o && h(p(e.fromXyz, o));
+	return !a || !s ? null : {
+		pipeToBase: t,
+		baseToRendering: p(e.fromXyz, a),
+		renderingToPipe: p(g(t), s)
+	};
+}
+function rn(e, t) {
+	let n = en(e.base_primaries, t), r = n === j ? f : p(n.fromXyz, j.toXyz), i = nn(n, r, [
+		e.red_inset,
+		e.green_inset,
+		e.blue_inset
+	], [
+		e.red_rotation,
+		e.green_rotation,
+		e.blue_rotation
+	], e.purity) ?? nn(n, r, [
+		0,
+		0,
+		0
+	], [
+		0,
+		0,
+		0
+	], 0);
+	if (!i) throw Error("singular colour matrix");
+	return i;
+}
+var an = {
+	sgPipeToBase: "mat3",
+	sgBaseToRendering: "mat3",
+	sgRenderingToPipe: "mat3",
+	sgPipeToBaseV1: "mat3",
+	sgBaseToRenderingV1: "mat3",
+	sgRenderingToPipeV1: "mat3",
+	sgCurve: "vec4",
+	sgShape: "vec4"
+};
+function on(e) {
+	let t = $t(e), n = rn(e, 2), r = rn(e, 1);
+	return {
+		sgPipeToBase: S(n.pipeToBase),
+		sgBaseToRendering: S(n.baseToRendering),
+		sgRenderingToPipe: S(n.renderingToPipe),
+		sgPipeToBaseV1: S(r.pipeToBase),
+		sgBaseToRenderingV1: S(r.baseToRendering),
+		sgRenderingToPipeV1: S(r.renderingToPipe),
+		sgCurve: [
+			t.whiteTarget,
+			t.paperExposure,
+			t.filmFog,
+			t.filmPower
+		],
+		sgShape: [
+			t.paperPower,
+			t.blackTarget,
+			t.huePreservation,
+			e.color_processing
+		]
+	};
+}
+var sn = (e) => ({
+	whiteTarget: e.sgCurve[0],
+	paperExposure: e.sgCurve[1],
+	filmFog: e.sgCurve[2],
+	filmPower: e.sgCurve[3],
+	paperPower: e.sgShape[0]
+}), cn = `${Te}
+${we}
+bool sgV2() {
+  bool v2 = false;
+#ifdef SL_PROCESS_VERSION
+#if SL_PROCESS_VERSION >= 2
+  v2 = true;
+#endif
+#endif
+  return v2;
+}
+float sgCurveAt(float x) {
+  float base = sgCurve.z + max(x, 0.0);
+  if (!(base > 0.0)) return 0.0;
+  float ratio = 1.0 / (1.0 + sgCurve.y * exp2(-sgCurve.w * log2(base)));
+  return sgCurve.x * pow(ratio, sgShape.x);
+}
+vec3 sgDesaturate(vec3 p) {
+  float average = max((p.r + p.g + p.b) / 3.0, 0.0);
+  float lowest = min(p.r, min(p.g, p.b));
+  float k = lowest < 0.0 ? -average / (lowest - average) : 1.0;
+  return average + k * (p - average);
+}
+ivec3 sgOrder(vec3 p) {
+  if (p.r >= p.g) {
+    if (p.g > p.b) return ivec3(2, 1, 0);
+    if (p.b > p.r) return ivec3(1, 0, 2);
+    if (p.b > p.g) return ivec3(1, 2, 0);
+    return ivec3(2, 1, 0);
+  }
+  if (p.r >= p.b) return ivec3(2, 0, 1);
+  if (p.b > p.g) return ivec3(0, 1, 2);
+  return ivec3(0, 2, 1);
+}
+float sgAt(vec3 v, int i) {
+  return i == 0 ? v.r : (i == 1 ? v.g : v.b);
+}
+vec3 sgScatter(ivec3 o, float lo, float md, float hi) {
+  return vec3(
+    o.z == 0 ? hi : (o.y == 0 ? md : lo),
+    o.z == 1 ? hi : (o.y == 1 ? md : lo),
+    o.z == 2 ? hi : (o.y == 2 ? md : lo));
+}
+vec3 sgPreserveHue(vec3 i, vec3 pc, float hue) {
+  ivec3 o = sgOrder(i);
+  float iLo = sgAt(i, o.x);
+  float iMd = sgAt(i, o.y);
+  float iHi = sgAt(i, o.z);
+  float cLo = sgAt(pc, o.x);
+  float cMd = sgAt(pc, o.y);
+  float cHi = sgAt(pc, o.z);
+  float chroma = iHi - iLo;
+  float midscale = chroma != 0.0 ? (iMd - iLo) / chroma : 0.0;
+  float full = cLo + (cHi - cLo) * midscale;
+  float naiveMid = (1.0 - hue) * cMd + hue * full;
+  float energy = pc.r + pc.g + pc.b;
+  float naiveEnergy = cLo + naiveMid + cHi;
+  float loPlusMd = iLo + iMd;
+  float blend = loPlusMd != 0.0 ? 2.0 * iLo / loPlusMd : 0.0;
+  float target = blend * energy + (1.0 - blend) * naiveEnergy;
+  if (naiveMid <= cMd) {
+    float mid = ((1.0 - hue) * cMd + hue * (midscale * cHi + (1.0 - midscale) * (target - cHi))) / (1.0 + hue * (1.0 - midscale));
+    return sgScatter(o, target - cHi - mid, mid, cHi);
+  }
+  float mid = ((1.0 - hue) * cMd + hue * (cLo * (1.0 - midscale) + midscale * (target - cLo))) / (1.0 + hue * midscale);
+  return sgScatter(o, cLo, mid, target - cLo - mid);
+}
+vec3 sgPerChannel(vec3 lin, bool v2) {
+  vec3 base = sgDesaturate((v2 ? sgPipeToBase : sgPipeToBaseV1) * lin);
+  vec3 r = (v2 ? sgBaseToRendering : sgBaseToRenderingV1) * base;
+  vec3 pc = vec3(sgCurveAt(r.r), sgCurveAt(r.g), sgCurveAt(r.b));
+  return (v2 ? sgRenderingToPipe : sgRenderingToPipeV1) * sgPreserveHue(r, pc, sgShape.z);
+}
+vec3 sgRgbRatio(vec3 p) {
+  vec3 pos = sgDesaturate(p);
+  float luma = (pos.r + pos.g + pos.b) / 3.0;
+  float mapped = sgCurveAt(luma);
+  vec3 pre = luma > 1.0e-9 ? (mapped / luma) * pos : vec3(mapped);
+  float lowest = min(pre.r, min(pre.g, pre.b));
+  float highest = max(pre.r, max(pre.g, pre.b));
+  float eps = 1.0e-6;
+  float toWhite = (sgCurve.x - mapped) / (highest - mapped + eps);
+  float toBlack = (sgShape.y - mapped) / (lowest - mapped - eps);
+  float border = min(toWhite, toBlack);
+  float chroma = (mapped - lowest) / (mapped + eps);
+  float adjustment = 1.0 / (chroma * border + eps);
+  float hyperbolic = 2.0 * chroma / (1.0 - chroma * chroma + eps) * adjustment;
+  float z = sqrt(hyperbolic * hyperbolic + 1.0);
+  float k = hyperbolic / (1.0 + z) * border;
+  return mapped + k * (pre - mapped);
+}
+vec3 sgRgbRatioIn(vec3 lin, bool v2) {
+  if (v2) return sgRgbRatio(lin);
+  return ${I(re)} * sgRgbRatio(${I(M)} * lin);
+}`, ln = "vec3 pipelineToDisplay(vec3 lin) {\n  bool v2 = sgV2();\n  vec3 c = ptmSanitise(lin);\n  return ptmEncode(sgShape.w > 0.5 ? sgRgbRatioIn(c, v2) : sgPerChannel(c, v2));\n}", un = "parametric-tonemappers.sigmoid", dn = on(Kt);
+function fn() {
+	return {
+		id: un,
+		name: "Sigmoid (parametric)",
+		description: "Sigmoid: a smooth log-logistic curve between a display black and white, with contrast and skew, applied per channel with hue preservation and adjustable primaries, or to RGB ratios.",
+		glsl: ln,
+		helpers: cn,
+		skipBaseCurve: !0,
+		skipToneShoulder: !0,
+		params: e(Gt),
+		derive: {
+			uniforms: i(an, dn),
+			fn: (e) => on(n(Gt, e))
+		}
+	};
 }
 //#endregion
 //#region src/panel/controls.ts
-var G = 100, Vt = 180 / Math.PI;
-function Ht(e, t, n, r, i, a, o = "", s = 1, c, l) {
+var K = 100, pn = 180 / Math.PI;
+function mn(e, t, n, r, i, a, o = "", s = 1, c, l) {
 	return {
 		kind: "slider",
 		key: e,
@@ -1884,35 +2199,35 @@ function Ht(e, t, n, r, i, a, o = "", s = 1, c, l) {
 		reset: l
 	};
 }
-var K = Ht, q = Ht;
-function J(e) {
+var q = mn, J = mn, Y = mn;
+function X(e) {
 	return /^[a-z][A-Z]/.test(e) ? e : e.charAt(0).toUpperCase() + e.slice(1);
 }
-var Ut = {
+var hn = {
 	red: "yellow (+) or magenta (-)",
 	green: "cyan (+) or yellow (-)",
 	blue: "magenta (+) or cyan (-)"
 };
-function Wt(e, t) {
+function gn(e, t) {
 	return [
 		"red",
 		"green",
 		"blue"
-	].flatMap((n) => e === "before" ? [K(`${n}_inset`, `${J(n)} attenuation`, `Increase to desaturate ${n}s in highlights faster`, 0, 99, .1, "%", G, t, 0), K(`${n}_rotation`, `${J(n)} rotation`, `Shift the ${n} primary towards ${Ut[n]}`, -30, 30, .1, "°", Vt, t, 0)] : [K(`${n}_outset`, `${J(n)} purity boost`, `Restore the purity of ${n}, mostly in midtones and shadows`, 0, 99, .1, "%", G, t, 0), K(`${n}_unrotation`, `${J(n)} reverse rotation`, `Reverse the colour shift in ${n}s`, -30, 30, .1, "°", Vt, t, 0)]);
+	].flatMap((n) => e === "before" ? [q(`${n}_inset`, `${X(n)} attenuation`, `Increase to desaturate ${n}s in highlights faster`, 0, 99, .1, "%", K, t, 0), q(`${n}_rotation`, `${X(n)} rotation`, `Shift the ${n} primary towards ${hn[n]}`, -30, 30, .1, "°", pn, t, 0)] : [q(`${n}_outset`, `${X(n)} purity boost`, `Restore the purity of ${n}, mostly in midtones and shadows`, 0, 99, .1, "%", K, t, 0), q(`${n}_unrotation`, `${X(n)} reverse rotation`, `Reverse the colour shift in ${n}s`, -30, 30, .1, "°", pn, t, 0)]);
 }
-var Gt = [
+var _n = [
 	1,
 	2,
 	3,
 	4,
 	5
-].map((e) => [e, J(ke[e])]), Kt = Je.map((e, t) => [t, J(e)]), qt = [
+].map((e) => [e, X(je[e])]), vn = Xe.map((e, t) => [t, X(e)]), yn = [
 	5,
 	6,
 	7,
 	8,
 	9
-].map((e) => [e, J(qe[e])]), Jt = (e) => !e.disable_primaries_adjustments, Y = (e) => !e.completely_reverse_primaries, Yt = [{
+].map((e) => [e, X(Ye[e])]), bn = (e) => !e.disable_primaries_adjustments, xn = (e) => !e.completely_reverse_primaries, Sn = [{
 	value: "settings",
 	label: "Settings",
 	tooltip: "Main look and curve settings",
@@ -1920,9 +2235,9 @@ var Gt = [
 		{
 			title: "Input exposure range",
 			controls: [
-				K("range_white_relative_ev", "White relative exposure", "Relative exposure above mid-grey (white point)", 1, 10, .01, "EV"),
-				K("range_black_relative_ev", "Black relative exposure", "Relative exposure below mid-grey (black point)", -20, -1, .01, "EV"),
-				K("dynamic_range_scaling", "Dynamic range scaling", "Symmetrically increase or decrease the computed dynamic range. useful to give a safety margin to extreme luminances.", -50, 50, .1, "%", G),
+				q("range_white_relative_ev", "White relative exposure", "Relative exposure above mid-grey (white point)", 1, 10, .01, "EV"),
+				q("range_black_relative_ev", "Black relative exposure", "Relative exposure below mid-grey (black point)", -20, -1, .01, "EV"),
+				q("dynamic_range_scaling", "Dynamic range scaling", "Symmetrically increase or decrease the computed dynamic range. useful to give a safety margin to extreme luminances.", -50, 50, .1, "%", K),
 				{
 					kind: "action",
 					id: "agxAutoTune",
@@ -1945,10 +2260,10 @@ var Gt = [
 					label: "Pivot relative exposure",
 					tooltip: "Set the pivot's input exposure in EV relative to mid-grey"
 				},
-				K("curve_pivot_y_linear_output", "Pivot target output", "Darken or brighten the pivot (linear output power)", 0, 100, .1, "%", G),
-				K("curve_contrast_around_pivot", "Contrast", "Slope of the linear section around the pivot", .1, 5, .01),
-				K("curve_shoulder_power", "Shoulder power", "Contrast in highlights\nhigher values keep the slope nearly constant for longer, at the cost of a more sudden drop near white", 1, 5, .01),
-				K("curve_toe_power", "Toe power", "Contrast in shadows\nhigher values keep the slope nearly constant for longer, at the cost of a more sudden drop near black", 1, 5, .01)
+				q("curve_pivot_y_linear_output", "Pivot target output", "Darken or brighten the pivot (linear output power)", 0, 100, .1, "%", K),
+				q("curve_contrast_around_pivot", "Contrast", "Slope of the linear section around the pivot", .1, 5, .01),
+				q("curve_shoulder_power", "Shoulder power", "Contrast in highlights\nhigher values keep the slope nearly constant for longer, at the cost of a more sudden drop near white", 1, 5, .01),
+				q("curve_toe_power", "Toe power", "Contrast in shadows\nhigher values keep the slope nearly constant for longer, at the cost of a more sudden drop near black", 1, 5, .01)
 			]
 		},
 		{
@@ -1960,28 +2275,28 @@ var Gt = [
 			title: "Advanced curve parameters",
 			collapsed: !0,
 			controls: [
-				K("curve_linear_ratio_above_pivot", "Shoulder start", "Length to keep curve linear above the pivot. may clip highlights", 0, 100, .1, "%", G),
-				K("curve_target_display_white_ratio", "Target white", "Max linear output power", 50, 100, .1, "%", G),
-				K("curve_linear_ratio_below_pivot", "Toe start", "Length to keep curve linear below the pivot. may crush shadows", 0, 100, .1, "%", G),
-				K("curve_target_display_black_ratio", "Target black", "Raise for a faded look", 0, 2.5, .01, "%", G),
+				q("curve_linear_ratio_above_pivot", "Shoulder start", "Length to keep curve linear above the pivot. may clip highlights", 0, 100, .1, "%", K),
+				q("curve_target_display_white_ratio", "Target white", "Max linear output power", 50, 100, .1, "%", K),
+				q("curve_linear_ratio_below_pivot", "Toe start", "Length to keep curve linear below the pivot. may crush shadows", 0, 100, .1, "%", K),
+				q("curve_target_display_black_ratio", "Target black", "Raise for a faded look", 0, 2.5, .01, "%", K),
 				{
 					kind: "toggle",
 					key: "auto_gamma",
 					label: "Keep the pivot on the diagonal",
 					tooltip: "Adjusts the gamma automatically, trying to make sure the curve always remains S-shaped (given that contrast is high enough), so toe and shoulder controls remain effective."
 				},
-				K("curve_gamma", "Curve y gamma", "Shifts the representation (but not the output power) of the pivot along the y axis of the curve. immediate contrast around the pivot is not affected, but shadows and highlights are; you may have to counteract it with the contrast slider or with toe / shoulder controls.", 1, 5, .01, "", 1, (e) => !e.auto_gamma)
+				q("curve_gamma", "Curve y gamma", "Shifts the representation (but not the output power) of the pivot along the y axis of the curve. immediate contrast around the pivot is not affected, but shadows and highlights are; you may have to counteract it with the contrast slider or with toe / shoulder controls.", 1, 5, .01, "", 1, (e) => !e.auto_gamma)
 			]
 		},
 		{
 			title: "Look",
 			collapsed: !0,
 			controls: [
-				K("look_slope", "Slope", "Decrease or increase contrast and brightness", 0, 2, .01),
-				K("look_lift", "Lift", "Deepen or lift shadows", -.5, .5, .01),
-				K("look_brightness", "Brightness", "Increase or decrease brightness", 0, 2, .01),
-				K("look_saturation", "Saturation", "Decrease or increase saturation", 0, 200, .1, "%", G),
-				K("look_original_hue_mix_ratio", "Preserve hue", "Increase to bring hues closer to the original", 0, 100, .1, "%", G)
+				q("look_slope", "Slope", "Decrease or increase contrast and brightness", 0, 2, .01),
+				q("look_lift", "Lift", "Deepen or lift shadows", -.5, .5, .01),
+				q("look_brightness", "Brightness", "Increase or decrease brightness", 0, 2, .01),
+				q("look_saturation", "Saturation", "Decrease or increase saturation", 0, 200, .1, "%", K),
+				q("look_original_hue_mix_ratio", "Preserve hue", "Increase to bring hues closer to the original", 0, 100, .1, "%", K)
 			]
 		}
 	]
@@ -1997,7 +2312,7 @@ var Gt = [
 				key: "base_primaries",
 				label: "Base primaries",
 				tooltip: "Colour space primaries to use as the base for below adjustments. Follows the working space, linear Rec.709 (Rec.2020 on older version 1 edits).",
-				options: Gt
+				options: _n
 			}, {
 				kind: "toggle",
 				key: "disable_primaries_adjustments",
@@ -2007,12 +2322,12 @@ var Gt = [
 		},
 		{
 			title: "Before tone mapping",
-			when: Jt,
-			controls: Wt("before")
+			when: bn,
+			controls: gn("before")
 		},
 		{
 			title: "After tone mapping",
-			when: Jt,
+			when: bn,
 			controls: [
 				{
 					kind: "toggle",
@@ -2025,15 +2340,15 @@ var Gt = [
 					id: "agxSetFromAbove",
 					label: "Set from above",
 					tooltip: "Set parameters to completely reverse primaries modifications, but allow subsequent editing",
-					enabled: Y
+					enabled: xn
 				},
-				K("master_outset_ratio", "Master purity boost", "Overall purity boost", 0, 200, .1, "%", G, Y, 1),
-				K("master_unrotation_ratio", "Master rotation reversal", "Overall unrotation ratio", 0, 200, .1, "%", G, Y, 1),
-				...Wt("after", Y)
+				q("master_outset_ratio", "Master purity boost", "Overall purity boost", 0, 200, .1, "%", K, xn, 1),
+				q("master_unrotation_ratio", "Master rotation reversal", "Overall unrotation ratio", 0, 200, .1, "%", K, xn, 1),
+				...gn("after", xn)
 			]
 		}
 	]
-}], Xt = (e) => e.custom_grey, Zt = [
+}], Cn = (e) => e.custom_grey, wn = [
 	{
 		value: "scene",
 		label: "Scene",
@@ -2041,10 +2356,10 @@ var Gt = [
 		sections: [{
 			title: "Scene",
 			controls: [
-				q("grey_point_source", "Middle grey luminance", "Adjust to match the average luminance of the image's subject. the value entered here will then be remapped to 18.45%. decrease the value to increase the overall brightness.", .1, 36, .01, "%", 1, Xt),
-				q("white_point_source", "White relative exposure", "Number of stops between middle grey and pure white. this is a reading a lightmeter would give you on the scene. adjust so highlights clipping is avoided", 2, 8, .01, "EV"),
-				q("black_point_source", "Black relative exposure", "Number of stops between middle grey and pure black. this is a reading a lightmeter would give you on the scene. increase to get more contrast. decrease to recover more details in low-lights.", -14, -3, .01, "EV"),
-				q("security_factor", "Dynamic range scaling", "Symmetrically enlarge or shrink the computed dynamic range. useful to give a safety margin to extreme luminances.", -50, 50, .1, "%"),
+				J("grey_point_source", "Middle grey luminance", "Adjust to match the average luminance of the image's subject. the value entered here will then be remapped to 18.45%. decrease the value to increase the overall brightness.", .1, 36, .01, "%", 1, Cn),
+				J("white_point_source", "White relative exposure", "Number of stops between middle grey and pure white. this is a reading a lightmeter would give you on the scene. adjust so highlights clipping is avoided", 2, 8, .01, "EV"),
+				J("black_point_source", "Black relative exposure", "Number of stops between middle grey and pure black. this is a reading a lightmeter would give you on the scene. increase to get more contrast. decrease to recover more details in low-lights.", -14, -3, .01, "EV"),
+				J("security_factor", "Dynamic range scaling", "Symmetrically enlarge or shrink the computed dynamic range. useful to give a safety margin to extreme luminances.", -50, 50, .1, "%"),
 				{
 					kind: "action",
 					id: "filmicAutoTune",
@@ -2070,8 +2385,8 @@ var Gt = [
 			{
 				title: "Tone mapping",
 				controls: [
-					q("contrast", "Contrast", "Slope of the linear part of the curve affects mostly the mid-tones", .5, 3, .001),
-					q("output_power", "Hardness", "Equivalent to paper grade in analog. increase to make highlights brighter and less compressed. decrease to mute highlights.", 1, 10, .01, "", 1, (e) => !e.auto_hardness),
+					J("contrast", "Contrast", "Slope of the linear part of the curve affects mostly the mid-tones", .5, 3, .001),
+					J("output_power", "Hardness", "Equivalent to paper grade in analog. increase to make highlights brighter and less compressed. decrease to mute highlights.", 1, 10, .01, "", 1, (e) => !e.auto_hardness),
 					{
 						kind: "direct",
 						side: "shoulder",
@@ -2095,21 +2410,21 @@ var Gt = [
 						key: "highlights",
 						label: "Contrast in highlights",
 						tooltip: "Shape of the highlights roll-off of the curve. perceptual (default) is a generalized sigmoid derived from a perceptual appearance model: always smooth and monotonic. hard/soft/safe are the legacy polynomial/rational segments; hard compresses highlights more, soft less.",
-						options: Kt
+						options: vn
 					},
 					{
 						kind: "select",
 						key: "shadows",
 						label: "Contrast in shadows",
 						tooltip: "Shape of the shadows roll-off of the curve. perceptual (default) is a generalized sigmoid derived from a perceptual appearance model: always smooth and monotonic. hard/soft/safe are the legacy polynomial/rational segments; hard compresses shadows more, soft less.",
-						options: Kt
+						options: vn
 					},
 					{ kind: "graph" }
 				]
 			},
 			{
 				title: "Colour mapping",
-				controls: [q("saturation", "Colour preservation", "How much of the per-channel hue drift to keep. saturation is not affected: valid diffuse colours (skin tones, product colours) keep their saturation and strongly compressed colours bleach, at any setting. -100% is pure AgX: full hue drift (the 'film' look). 0% (default) removes half the hue drift. +100% restores the original hues exactly.", -100, 100, .1, "%")]
+				controls: [J("saturation", "Colour preservation", "How much of the per-channel hue drift to keep. saturation is not affected: valid diffuse colours (skin tones, product colours) keep their saturation and strongly compressed colours bleach, at any setting. -100% is pure AgX: full hue drift (the 'film' look). 0% (default) removes half the hue drift. +100% restores the original hues exactly.", -100, 100, .1, "%")]
 			},
 			{
 				title: "Advanced",
@@ -2118,7 +2433,7 @@ var Gt = [
 					key: "version",
 					label: "Colour science",
 					tooltip: "V8 tone maps each RGB channel separately in an inset rendering space: highlights bleach toward white and hues drift as tonal compression increases, with a parametric hue recovery on the colour preservation slider.",
-					options: qt
+					options: yn
 				}, {
 					kind: "toggle",
 					key: "auto_hardness",
@@ -2135,20 +2450,73 @@ var Gt = [
 		sections: [{
 			title: "Display",
 			controls: [
-				q("black_point_target", "Target black luminance", "Luminance of output pure black, this should be 0% except if you want a faded look", 0, 20, 1e-4, "%"),
-				q("grey_point_target", "Target middle grey", "Middle grey value of the target display or colour space. you should never touch that unless you know what you are doing.", 1, 50, .01, "%", 1, Xt),
-				q("white_point_target", "Target white luminance", "Luminance of output pure white, this should be 100% except if you want a faded look", 0, 100, .01, "%")
+				J("black_point_target", "Target black luminance", "Luminance of output pure black, this should be 0% except if you want a faded look", 0, 20, 1e-4, "%"),
+				J("grey_point_target", "Target middle grey", "Middle grey value of the target display or colour space. you should never touch that unless you know what you are doing.", 1, 50, .01, "%", 1, Cn),
+				J("white_point_target", "Target white luminance", "Luminance of output pure white, this should be 100% except if you want a faded look", 0, 100, .01, "%")
 			]
 		}]
 	}
-], Qt = (e, t) => e / (1 + e ** +t) ** (1 / t);
-function $t(e, t) {
+], Tn = (e) => e.color_processing === 0, En = [
+	"red",
+	"green",
+	"blue"
+].flatMap((e) => [Y(`${e}_inset`, `${X(e)} attenuation`, `Attenuate the purity of the ${e} primary`, 0, 50, .1, "%", K), Y(`${e}_rotation`, `${X(e)} rotation`, `Rotate the ${e} primary`, -22.9, 22.9, .1, "°", pn)]), Dn = [{
+	value: "settings",
+	label: "Settings",
+	tooltip: "The curve, the colour processing and the display targets",
+	sections: [
+		{
+			title: "Curve",
+			controls: [Y("middle_grey_contrast", "Contrast", "Compression of the applied curve implicitly defines the supported input dynamic range", .7, 3, .001), Y("contrast_skewness", "Skew", "Shift the compression towards shadows or highlights. negative values increase contrast in shadows. positive values increase contrast in highlights. the opposite end will see a reduction in contrast.", -1, 1, .01)]
+		},
+		{
+			title: "Colour",
+			controls: [{
+				kind: "select",
+				key: "color_processing",
+				label: "Colour processing",
+				tooltip: "Per channel tone maps red, green and blue apart, so bright colours bleach towards white; RGB ratio tone maps their average and keeps the ratios between them.",
+				options: qt.map((e, t) => [t, X(e)])
+			}, Y("hue_preservation", "Preserve hue", "Optional correction of the hue twist introduced by the per-channel processing method.", 0, 100, .1, "%", 1, Tn)]
+		},
+		{
+			title: "Show curve",
+			collapsed: !0,
+			controls: [{ kind: "graph" }]
+		},
+		{
+			title: "Display luminance",
+			collapsed: !0,
+			controls: [Y("display_black_target", "Target black", "The black luminance of the target display or print. can be used creatively for a faded look.", 0, 1, 1e-4, "%"), Y("display_white_target", "Target white", "The white luminance of the target display or print. can be used creatively for a faded look or blowing out whites earlier.", 50, 100, .1, "%")]
+		}
+	]
+}, {
+	value: "primaries",
+	label: "Primaries",
+	tooltip: "Set custom primaries",
+	when: Tn,
+	sections: [{
+		title: "Primaries",
+		controls: [
+			{
+				kind: "select",
+				key: "base_primaries",
+				label: "Base primaries",
+				tooltip: "Primaries to use as the base for below adjustments. Working profile follows the working space, linear Rec.709 (Rec.2020 on older version 1 edits).",
+				options: Jt.map((e, t) => [t, X(e)])
+			},
+			...En,
+			Y("purity", "Recover purity", "Recover some of the original purity after the inset", 0, 100, 1, "%", K)
+		]
+	}]
+}], On = (e, t) => e / (1 + e ** +t) ** (1 / t);
+function kn(e, t) {
 	let [n, r, i, a] = t.agxToe, [o, s, c, l] = t.agxShoulder, [u, d, f, p] = t.agxCurveC, [m, h, g] = t.agxToeFallback, [_, v, y] = t.agxShFallback, b;
-	return b = e < n ? m > .5 ? e < 0 ? f : f + Math.max(0, h * e ** +g) : i * Qt(u * (e - n) / i, a) + r : e <= o ? u * e + d : _ > .5 ? e >= 1 ? p : p - Math.max(0, v * (1 - e) ** y) : c * Qt(u * (e - o) / c, l) + s, b >= f ? Math.min(b, p) : f;
+	return b = e < n ? m > .5 ? e < 0 ? f : f + Math.max(0, h * e ** +g) : i * On(u * (e - n) / i, a) + r : e <= o ? u * e + d : _ > .5 ? e >= 1 ? p : p - Math.max(0, v * (1 - e) ** y) : c * On(u * (e - o) / c, l) + s, b >= f ? Math.min(b, p) : f;
 }
 //#endregion
 //#region src/filmic/twin.ts
-function en(e, t) {
+function An(e, t) {
 	let [n, r] = t.fNodes, [, , i, a] = t.fDisplay, [o, s, c, l, u] = [
 		t.fM1,
 		t.fM2,
@@ -2177,8 +2545,14 @@ function en(e, t) {
 	return o[2] + e * s[2];
 }
 //#endregion
+//#region src/sigmoid/twin.ts
+function jn(e, t) {
+	let n = e > 0 ? e : 0, r = (t.filmFog + n) ** +t.filmPower, i = t.whiteTarget * (r / (t.paperExposure + r)) ** +t.paperPower;
+	return Number.isNaN(i) ? t.whiteTarget : i;
+}
+//#endregion
 //#region src/panel/Graph.ts
-function tn(e, t) {
+function Mn(e, t) {
 	let n;
 	try {
 		n = e();
@@ -2189,31 +2563,39 @@ function tn(e, t) {
 	for (let e in t) n[e].every(Number.isFinite) && (r[e] = n[e]);
 	return r;
 }
-function nn(e, t = 64) {
+function Nn(e, t = 64) {
 	return Array.from({ length: t + 1 }, (n, r) => [r / t, e(r / t)]);
 }
-function rn(e) {
-	let t = tn(() => be(e), je), n = Math.min(1 - 1e-6, Math.max(1e-6, e.curve_pivot_x));
+function Pn(e) {
+	let t = Mn(() => xe(e), Ne), n = Math.min(1 - 1e-6, Math.max(1e-6, e.curve_pivot_x));
 	return {
-		points: nn((e) => $t(e, t)),
-		marker: [n, $t(n, t)]
+		points: Nn((e) => kn(e, t)),
+		marker: [n, kn(n, t)]
 	};
 }
-function an(e) {
-	let t = tn(() => st(e), gt), n = t.fNodes[2], r = (e) => {
-		let r = en(e, t);
+function Fn(e) {
+	let t = Mn(() => lt(e), vt), n = t.fNodes[2], r = (e) => {
+		let r = An(e, t);
 		return r >= 0 ? Math.min(r, n) : 0;
 	}, [, i, a] = t.fLog, o = Math.abs(i) / a;
 	return {
-		points: nn(r),
+		points: Nn(r),
 		marker: [o, r(o)]
 	};
 }
-var X = 100, on = ([e, t]) => Number.isFinite(e) && Number.isFinite(t);
-function sn({ points: e, marker: t }) {
-	let n = U().ui.tokens;
-	return W("svg", {
-		viewBox: `0 0 ${X} ${X}`,
+var In = -10, Ln = 16.5;
+function Rn(e) {
+	let t = sn(Mn(() => on(e), dn)), n = (e) => De(jn(Wt * 2 ** (In + e * Ln), t)), r = 10 / Ln;
+	return {
+		points: Nn(n),
+		marker: [r, n(r)]
+	};
+}
+var Z = 100, zn = ([e, t]) => Number.isFinite(e) && Number.isFinite(t);
+function Bn({ points: e, marker: t }) {
+	let n = H().ui.tokens;
+	return U("svg", {
+		viewBox: `0 0 ${Z} ${Z}`,
 		role: "img",
 		"aria-label": "Curve",
 		style: {
@@ -2223,28 +2605,28 @@ function sn({ points: e, marker: t }) {
 			border: `1px solid ${n.border}`,
 			borderRadius: 4
 		}
-	}, W("line", {
+	}, U("line", {
 		x1: 0,
-		y1: X,
-		x2: X,
+		y1: Z,
+		x2: Z,
 		y2: 0,
 		stroke: n.border,
 		strokeWidth: .5
-	}), W("polyline", {
-		points: e.filter(on).map(([e, t]) => `${(e * X).toFixed(2)},${((1 - t) * X).toFixed(2)}`).join(" "),
+	}), U("polyline", {
+		points: e.filter(zn).map(([e, t]) => `${(e * Z).toFixed(2)},${((1 - t) * Z).toFixed(2)}`).join(" "),
 		fill: "none",
 		stroke: n.textPrimary,
 		strokeWidth: 1
-	}), t && on(t) ? W("circle", {
-		cx: t[0] * X,
-		cy: (1 - t[1]) * X,
+	}), t && zn(t) ? U("circle", {
+		cx: t[0] * Z,
+		cy: (1 - t[1]) * Z,
 		r: 1.6,
 		fill: n.accent
 	}) : null);
 }
 //#endregion
 //#region src/panel/presets.ts
-var Z = (e) => e * Math.PI / 180, cn = {
+var Q = (e) => e * Math.PI / 180, Vn = {
 	look_slope: 1,
 	look_brightness: 1,
 	look_lift: 0,
@@ -2264,12 +2646,12 @@ var Z = (e) => e * Math.PI / 180, cn = {
 	curve_gamma: 2.2,
 	curve_pivot_x: 10 / 16.5,
 	curve_pivot_y_linear_output: .18
-}, ln = {
+}, Hn = {
 	disable_primaries_adjustments: !1,
 	completely_reverse_primaries: !1
-}, Q = {
+}, $ = {
 	classic: {
-		...ln,
+		...Hn,
 		base_primaries: 2,
 		red_inset: .29462451,
 		green_inset: .25861925,
@@ -2287,25 +2669,25 @@ var Z = (e) => e * Math.PI / 180, cn = {
 		blue_unrotation: -.06305724
 	},
 	smooth: {
-		...ln,
+		...Hn,
 		base_primaries: 1,
 		red_inset: .1,
 		green_inset: .1,
 		blue_inset: .15,
-		red_rotation: Z(2),
-		green_rotation: Z(-1),
-		blue_rotation: Z(-3),
+		red_rotation: Q(2),
+		green_rotation: Q(-1),
+		blue_rotation: Q(-3),
 		master_outset_ratio: 0,
 		master_unrotation_ratio: 1,
 		red_outset: .1,
 		green_outset: .1,
 		blue_outset: .15,
-		red_unrotation: Z(2),
-		green_unrotation: Z(-1),
-		blue_unrotation: Z(-3)
+		red_unrotation: Q(2),
+		green_unrotation: Q(-1),
+		blue_unrotation: Q(-3)
 	},
 	unmodified: {
-		...ln,
+		...Hn,
 		base_primaries: 2,
 		red_inset: 0,
 		green_inset: 0,
@@ -2322,35 +2704,35 @@ var Z = (e) => e * Math.PI / 180, cn = {
 		green_unrotation: 0,
 		blue_unrotation: 0
 	}
-}, un = (e) => .18 ** (1 / e), dn = 2.4 * (2.4 * un(2.4) ** 1.4 / (2.2 * un(2.2) ** 1.2)), $ = (...e) => e.reduce((e, t) => ({
+}, Un = (e) => .18 ** (1 / e), Wn = 2.4 * (2.4 * Un(2.4) ** 1.4 / (2.2 * Un(2.2) ** 1.2)), Gn = (...e) => e.reduce((e, t) => ({
 	...e,
 	...t
 }), {
-	...Oe,
-	...cn
-}), fn = $(Q.classic, {
+	...Ae,
+	...Vn
+}), Kn = Gn($.classic, {
 	curve_shoulder_power: 1.5,
 	curve_toe_power: 1.5,
 	curve_gamma: 2.4,
-	curve_contrast_around_pivot: dn
-}), pn = $(Q.classic, {
+	curve_contrast_around_pivot: Wn
+}), qn = Gn($.classic, {
 	look_original_hue_mix_ratio: 1,
 	curve_contrast_around_pivot: 3.07,
 	curve_toe_power: 1.4,
 	curve_shoulder_power: 3.71
-}), mn = [
+}), Jn = [
 	{
 		name: "unmodified base primaries",
-		params: $(Q.unmodified)
+		params: Gn($.unmodified)
 	},
 	{
 		name: "classic | base",
-		params: fn
+		params: Kn
 	},
 	{
 		name: "classic | punchy",
 		params: {
-			...fn,
+			...Kn,
 			look_brightness: 1 / 1.35 ** 2,
 			look_lift: 0,
 			look_saturation: 1.4
@@ -2358,13 +2740,13 @@ var Z = (e) => e * Math.PI / 180, cn = {
 	},
 	{
 		name: "sigmoid-like | default",
-		params: pn
+		params: qn
 	},
 	{
 		name: "sigmoid-like | smooth",
 		params: {
-			...pn,
-			...Q.smooth,
+			...qn,
+			...$.smooth,
 			look_original_hue_mix_ratio: 0,
 			curve_contrast_around_pivot: 2.98,
 			curve_toe_power: 1.61,
@@ -2373,15 +2755,60 @@ var Z = (e) => e * Math.PI / 180, cn = {
 	},
 	{
 		name: "smooth",
-		params: $(Q.smooth)
+		params: Gn($.smooth)
 	}
-], hn = "Tone mapper", gn = "This photo uses another display transform. Pick one of these to edit its settings here.", _n = "This photo uses the older processing, so Safelight's own highlight shoulder still runs before the transform. Use Update processing in Develop's status bar to give the transform the full range.", vn = "Auto tune needs a Safelight build that can measure the scene before the display transform.", yn = "Nothing to measure: no photo is rendered yet, or this GPU has no float render targets.", bn = (e) => (String(e).split(".")[1] ?? "").length, xn = (e, t) => Number(e.toFixed(bn(t) + 1));
-function Sn({ label: e, tooltip: t, value: n, min: r, max: i, ...a }) {
-	let o = U(), s = xn(n, a.step);
-	return W("div", {
+], Yn = (e) => Math.fround(Math.fround(e) * Math.fround(Math.PI) / 180), Xn = {
+	...Kt,
+	middle_grey_contrast: 1.22,
+	contrast_skewness: .65
+}, Zn = {
+	...Xn,
+	middle_grey_contrast: 1.6,
+	contrast_skewness: -.2,
+	hue_preservation: 0
+}, Qn = {
+	...Zn,
+	middle_grey_contrast: 1,
+	contrast_skewness: 0,
+	color_processing: 1
+}, $n = {
+	...Qn,
+	middle_grey_contrast: 1.5,
+	contrast_skewness: -.2,
+	color_processing: 0,
+	hue_preservation: 0,
+	red_inset: .1,
+	green_inset: .1,
+	blue_inset: .15,
+	red_rotation: Yn(2),
+	green_rotation: Yn(-1),
+	blue_rotation: Yn(-3),
+	purity: 0,
+	base_primaries: 1
+}, er = [
+	{
+		name: "neutral grey",
+		params: Xn
+	},
+	{
+		name: "ACES 100-nit like",
+		params: Zn
+	},
+	{
+		name: "Reinhard",
+		params: Qn
+	},
+	{
+		name: "smooth",
+		params: $n
+	}
+], tr = "Tone mapper", nr = "This photo uses another display transform. Pick one of these to edit its settings here.", rr = "This photo uses the older processing, so Safelight's own highlight shoulder still runs before the transform. Use Update processing in Develop's status bar to give the transform the full range.", ir = "Auto tune needs a Safelight build that can measure the scene before the display transform.", ar = "Nothing to measure: no photo is rendered yet, or this GPU has no float render targets.", or = (e) => (String(e).split(".")[1] ?? "").length, sr = (e, t) => Number(e.toFixed(or(t) + 1));
+function cr({ label: e, tooltip: t, value: n, min: r, max: i, ...a }) {
+	let o = H(), s = sr(n, a.step);
+	return U("div", {
 		key: e,
 		title: t
-	}, W(o.components.Slider, {
+	}, U(o.components.Slider, {
 		label: e,
 		value: s,
 		min: Math.min(r, s),
@@ -2389,119 +2816,133 @@ function Sn({ label: e, tooltip: t, value: n, min: r, max: i, ...a }) {
 		...a
 	}));
 }
-var Cn = (e, t, n) => e.kind === "pivot" ? Sn({
+var lr = (e, t, n) => e.kind === "pivot" ? cr({
 	label: `${e.label} (EV)`,
 	tooltip: e.tooltip,
-	value: yt(t),
+	value: xt(t),
 	min: t.range_black_relative_ev,
 	max: t.range_white_relative_ev,
 	step: .01,
 	defaultValue: 0,
 	onChange: (e) => {
 		let t = n.from();
-		n.write({ curve_pivot_x: bt({
+		n.write({ curve_pivot_x: St({
 			black: t.range_black_relative_ev,
 			white: t.range_white_relative_ev
 		}, e) });
 	},
 	onCommit: () => n.commit(e.label)
-}) : null, wn = (e, t, n) => e.kind === "direct" ? Sn({
+}) : null, ur = (e, t, n) => e.kind === "direct" ? cr({
 	label: `${e.label} (%)`,
 	tooltip: e.tooltip,
-	value: Et(t)[e.side],
+	value: Ot(t)[e.side],
 	min: e.min,
 	max: e.max,
 	step: .1,
 	defaultValue: e.reset,
 	onChange: (t) => {
-		let r = n.from(), i = Et(r);
-		n.write(e.side === "toe" ? Dt(r, t, i.shoulder) : Dt(r, i.toe, t));
+		let r = n.from(), i = Ot(r);
+		n.write(e.side === "toe" ? kt(r, t, i.shoulder) : kt(r, i.toe, t));
 	},
 	onCommit: () => n.commit(e.label)
-}) : null, Tn = {
-	id: Ae,
+}) : null, dr = {
+	id: Me,
 	name: "AgX",
 	table: L,
-	tabs: Yt,
-	edit: xt,
-	graph: rn,
-	special: Cn,
+	tabs: Sn,
+	edit: Ct,
+	graph: Pn,
+	special: lr,
 	actions: {
 		agxAutoTune: {
 			label: "AgX auto tune levels",
 			scene: !0,
-			run: Pt
+			run: Lt
 		},
 		agxReadExposure: {
 			label: "AgX read exposure",
 			scene: !1,
-			run: Ft
+			run: Rt
 		},
 		agxSetFromAbove: {
 			label: "AgX set from above",
 			scene: !1,
-			run: St
+			run: wt
 		}
 	},
-	presets: mn,
+	presets: Jn,
 	resets: {
 		tab: "primaries",
-		sets: Q
+		sets: $
 	}
-}, En = {
-	id: ht,
+}, fr = {
+	id: _t,
 	name: "Filmic",
 	table: R,
-	tabs: Zt,
-	edit: At,
-	graph: an,
-	special: wn,
+	tabs: wn,
+	edit: Mt,
+	graph: Fn,
+	special: ur,
 	actions: { filmicAutoTune: {
 		label: "Filmic auto tune levels",
 		scene: !0,
 		raw: !0,
-		run: It
+		run: zt
 	} }
+}, pr = {
+	id: un,
+	name: "Sigmoid",
+	table: Gt,
+	tabs: Dn,
+	edit: (e, t) => t,
+	graph: Rn,
+	special: () => null,
+	actions: {},
+	presets: er
 };
-function Dn(e) {
-	let t = U().stores.useDevelopStore.getState();
+function mr(e) {
+	let t = H().stores.useDevelopStore.getState();
 	t.setParam("displayTransform", e), t.commitEdit("Display transform");
 }
-function On(e) {
-	let t = U().stores.useDevelopStore.getState();
+function hr(e) {
+	let t = H().stores.useDevelopStore.getState();
 	t.setDynParams(o(e.id, r(e.table))), t.commitEdit(`${e.name} reset`);
 }
-function kn() {
-	let e = U(), t = e.pipelines.effectiveId(e.stores.useDevelopStore.getState().params.displayTransform);
-	t === "parametric-tonemappers.agx" ? On(Tn) : t === "parametric-tonemappers.filmic" && On(En);
+function gr() {
+	let e = H(), t = e.pipelines.effectiveId(e.stores.useDevelopStore.getState().params.displayTransform);
+	t === "parametric-tonemappers.agx" ? hr(dr) : t === "parametric-tonemappers.filmic" ? hr(fr) : t === "parametric-tonemappers.sigmoid" && hr(pr);
 }
-function An() {
-	let e = U().ui;
-	return W(e.Stack, { gap: 8 }, W("p", { style: {
+function _r() {
+	let e = H().ui;
+	return U(e.Stack, { gap: 8 }, U("p", { style: {
 		margin: 0,
 		color: e.tokens.textSecondary,
 		fontSize: 11
-	} }, gn), W(e.Row, {
+	} }, nr), U(e.Row, {
 		gap: 6,
 		wrap: !0
-	}, W(e.Button, { onClick: () => Dn(Ae) }, "Use AgX (parametric)"), W(e.Button, { onClick: () => Dn(ht) }, "Use Filmic RGB (parametric)")));
+	}, U(e.Button, { onClick: () => mr(Me) }, "Use AgX (parametric)"), U(e.Button, { onClick: () => mr(_t) }, "Use Filmic RGB (parametric)"), U(e.Button, { onClick: () => mr(un) }, "Use Sigmoid (parametric)")));
 }
-function jn() {
-	let e = U(), { useDevelopStore: t, usePipelineStore: n } = e.stores, r = t((e) => e.params.displayTransform), i = t((e) => e.params.processVersion), a = t((e) => e.photoId);
+function vr() {
+	let e = H(), { useDevelopStore: t, usePipelineStore: n } = e.stores, r = t((e) => e.params.displayTransform), i = t((e) => e.params.processVersion), a = t((e) => e.photoId);
 	n((e) => e.activeId);
 	let o = e.pipelines.effectiveId(r), s = `${o}:${a}`;
-	return o === "parametric-tonemappers.agx" ? W(Mn, {
+	return o === "parametric-tonemappers.agx" ? U(yr, {
 		key: s,
-		ui: Tn,
+		ui: dr,
 		processVersion: i
-	}) : o === "parametric-tonemappers.filmic" ? W(Mn, {
+	}) : o === "parametric-tonemappers.filmic" ? U(yr, {
 		key: s,
-		ui: En,
+		ui: fr,
 		processVersion: i
-	}) : W(An, null);
+	}) : o === "parametric-tonemappers.sigmoid" ? U(yr, {
+		key: s,
+		ui: pr,
+		processVersion: i
+	}) : U(_r, null);
 }
-function Mn({ ui: e, processVersion: t }) {
-	let i = U(), { useRef: c, useState: l } = i.react, u = i.ui, d = i.stores.useDevelopStore, f = i.develop.useParamScope(), p = `${e.id}.tab`, [m, h] = l(() => i.settings.get(p, e.tabs[0].value)), [g, _] = l(null), [, v] = l(0), y = c(null), b = () => n(e.table, s(e.id, f.getParams())), x = b(), S = r(e.table), C = (t, n, r) => {
+function yr({ ui: e, processVersion: t }) {
+	let i = H(), { useRef: c, useState: l } = i.react, u = i.ui, d = i.stores.useDevelopStore, f = i.develop.useParamScope(), p = `${e.id}.tab`, [m, h] = l(() => i.settings.get(p, e.tabs[0].value)), [g, _] = l(null), [, v] = l(0), y = c(null), b = () => n(e.table, s(e.id, f.getParams())), x = b(), S = r(e.table), C = (t, n, r) => {
 		let i = a(e.table, n);
 		return o(e.id, a(e.table, r ? i : e.edit(t, i)));
 	}, w = (e, t, n = !1) => {
@@ -2528,16 +2969,16 @@ function Mn({ ui: e, processVersion: t }) {
 		if (_(null), !n.scene) return w(n.run(b(), d.getState().params.exposure), n.label, n.raw);
 		let r = d.getState().photoId, a;
 		try {
-			a = await Rt(i);
+			a = await Vt(i);
 		} catch {
 			a = "no frame";
 		}
 		let o = d.getState();
-		o.photoId === r && i.pipelines.effectiveId(o.params.displayTransform) === e.id && (a === "unsupported" ? _(vn) : a === "no frame" ? _(yn) : w(n.run(b(), a), n.label, n.raw));
+		o.photoId === r && i.pipelines.effectiveId(o.params.displayTransform) === e.id && (a === "unsupported" ? _(ir) : a === "no frame" ? _(ar) : w(n.run(b(), a), n.label, n.raw));
 	}, te = (t, n) => {
 		if ("when" in t && t.when && !t.when(x)) return null;
 		switch (t.kind) {
-			case "slider": return Sn({
+			case "slider": return cr({
 				label: t.unit ? `${t.label} (${t.unit})` : t.label,
 				tooltip: t.tooltip,
 				value: x[t.key] * t.scale,
@@ -2548,17 +2989,17 @@ function Mn({ ui: e, processVersion: t }) {
 				onChange: (e) => E.write(D(t.key, e / t.scale)),
 				onCommit: () => E.commit(t.label)
 			});
-			case "toggle": return W("div", {
+			case "toggle": return U("div", {
 				key: t.key,
 				title: t.tooltip
-			}, W(u.Toggle, {
+			}, U(u.Toggle, {
 				checked: x[t.key],
 				label: t.label,
 				onChange: (e) => w(D(t.key, e), t.label)
 			}));
 			case "select": {
 				let e = x[t.key], n = t.options.some(([t]) => t === e) ? e : t.options[1][0];
-				return W(u.Select, {
+				return U(u.Select, {
 					key: t.key,
 					ariaLabel: t.label,
 					title: t.tooltip,
@@ -2572,15 +3013,15 @@ function Mn({ ui: e, processVersion: t }) {
 			}
 			case "action": {
 				let n = e.actions[t.id]?.scene === !0 && !i.develop.captureFloatFrame, r = t.enabled !== void 0 && !t.enabled(x);
-				return W(u.Button, {
+				return U(u.Button, {
 					key: t.id,
 					size: "sm",
 					disabled: n || r,
-					title: n ? vn : t.tooltip,
+					title: n ? ir : t.tooltip,
 					onClick: () => void ee(t.id)
 				}, t.label);
 			}
-			case "graph": return W(sn, {
+			case "graph": return U(Bn, {
 				key: `graph-${n}`,
 				...e.graph(x)
 			});
@@ -2588,7 +3029,7 @@ function Mn({ ui: e, processVersion: t }) {
 		}
 	}, O = (t) => {
 		if (t.when && !t.when(x)) return null;
-		let n = `${e.id}.open.${t.title}`, r = !t.collapsed || i.settings.get(n, !1), a = t.title.toLowerCase().replace(/^show /, ""), o = t.collapsed ? W(u.Button, {
+		let n = `${e.id}.open.${t.title}`, r = !t.collapsed || i.settings.get(n, !1), a = t.title.toLowerCase().replace(/^show /, ""), o = t.collapsed ? U(u.Button, {
 			variant: "ghost",
 			size: "sm",
 			"aria-label": `${r ? "Hide" : "Show"} ${a}`,
@@ -2596,12 +3037,12 @@ function Mn({ ui: e, processVersion: t }) {
 				i.settings.set(n, !r), v((e) => e + 1);
 			}
 		}, r ? "Hide" : "Show") : void 0;
-		return W(u.Section, {
+		return U(u.Section, {
 			key: t.title,
 			title: t.title,
 			right: o
-		}, r ? W(u.Stack, { gap: 6 }, ...t.controls.map(te)) : null);
-	}, k = (e, t, n) => W(u.Select, {
+		}, r ? U(u.Stack, { gap: 6 }, ...t.controls.map(te)) : null);
+	}, k = (e, t, n) => U(u.Select, {
 		key: e,
 		ariaLabel: e,
 		placeholder: e,
@@ -2611,17 +3052,17 @@ function Mn({ ui: e, processVersion: t }) {
 			label: e
 		})),
 		onChange: n
-	}), A = e.tabs.find((e) => e.value === m) ?? e.tabs[0], { presets: j, resets: M } = e;
-	return W(u.Stack, { gap: 10 }, (t ?? 1) < 2 ? W("p", { style: {
+	}), A = e.tabs.filter((e) => !e.when || e.when(x)), ne = A.find((e) => e.value === m) ?? A[0], { presets: j, resets: M } = e;
+	return U(u.Stack, { gap: 10 }, (t ?? 1) < 2 ? U("p", { style: {
 		margin: 0,
 		color: u.tokens.textMuted,
 		fontSize: 11
-	} }, _n) : null, j ? k("Preset", j.map((e) => e.name), (t) => {
+	} }, rr) : null, j ? k("Preset", j.map((e) => e.name), (t) => {
 		let n = j.find((e) => e.name === t);
 		n && w(n.params, `${e.name} preset: ${t}`, !0);
-	}) : null, W(u.SegmentedControl, {
-		value: A.value,
-		options: e.tabs.map((e) => ({
+	}) : null, U(u.SegmentedControl, {
+		value: ne.value,
+		options: A.map((e) => ({
 			value: e.value,
 			label: e.label,
 			title: e.tooltip
@@ -2629,10 +3070,10 @@ function Mn({ ui: e, processVersion: t }) {
 		onChange: (e) => {
 			i.settings.set(p, e), h(e);
 		}
-	}), M && A.value === M.tab ? k("Reset primaries", Object.keys(M.sets), (t) => {
+	}), M && ne.value === M.tab ? k("Reset primaries", Object.keys(M.sets), (t) => {
 		let n = M.sets[t];
 		n && w(n, `${e.name} reset primaries: ${t}`);
-	}) : null, ...A.sections.map(O), g ? W("p", { style: {
+	}) : null, ...ne.sections.map(O), g ? U("p", { style: {
 		margin: 0,
 		color: u.tokens.textSecondary,
 		fontSize: 11
@@ -2640,22 +3081,22 @@ function Mn({ ui: e, processVersion: t }) {
 }
 //#endregion
 //#region src/index.ts
-function Nn(e) {
-	Bt(e), e.registerPipeline(Me()), e.registerPipeline(_t()), e.registerPanel({
+function br(e) {
+	Ut(e), e.registerPipeline(Pe()), e.registerPipeline(yt()), e.registerPipeline(fn()), e.registerPanel({
 		id: "parametric-tonemappers.panel",
-		title: hn,
-		component: jn,
+		title: tr,
+		component: vr,
 		defaultDock: {
 			module: "develop",
 			direction: "right",
 			order: 4,
 			width: 268
 		},
-		onReset: kn
+		onReset: gr
 	});
 }
-function Pn() {}
+function xr() {}
 //#endregion
-export { Nn as activate, Pn as deactivate };
+export { br as activate, xr as deactivate };
 
 //# sourceMappingURL=index.js.map

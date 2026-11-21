@@ -1,5 +1,6 @@
 // This file is part of darktable,
 // Copyright (C) 2025-2026 darktable developers.
+// portions Copyright (C) 2020-2026 darktable developers (src/iop/sigmoid.c)
 //
 // darktable is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +18,12 @@
 // Transcribes init_presets and its setters (agx.c L317-398, L2485-2654),
 // release-5.6.2: the three primaries sets and the six presets that are always
 // created. The "scene-referred default" preset only exists in darktable under
-// the AgX workflow and equals this extension's defaults.
+// the AgX workflow and equals this extension's defaults. Also transcribes
+// sigmoid's init_presets (sigmoid.c L227-296), whose "scene-referred default"
+// is likewise the defaults.
 
 import { AGX_DEFAULTS, type AgxParams } from "../agx/params";
+import { SIGMOID_DEFAULTS, type SigmoidParams } from "../sigmoid/params";
 
 const deg = (d: number): number => (d * Math.PI) / 180;
 
@@ -95,4 +99,28 @@ export const AGX_PRESETS: readonly { name: string; params: AgxParams }[] = [
     },
   },
   { name: "smooth", params: make(AGX_PRIMARIES.smooth) },
+];
+
+// deg2radf: darktable stores the preset's rotations as float radians.
+const degf = (d: number): number => Math.fround((Math.fround(d) * Math.fround(Math.PI)) / 180);
+
+// Upstream builds each preset on a zeroed struct, carrying the fields the one
+// before set; its base primaries 0 is darktable's working profile, linear
+// Rec2020 by default, which here is Rec2020 (1), as the defaults are.
+const neutralGray: SigmoidParams = { ...SIGMOID_DEFAULTS, middle_grey_contrast: 1.22, contrast_skewness: 0.65 };
+const aces: SigmoidParams = { ...neutralGray, middle_grey_contrast: 1.6, contrast_skewness: -0.2, hue_preservation: 0 };
+const reinhard: SigmoidParams = { ...aces, middle_grey_contrast: 1, contrast_skewness: 0, color_processing: 1 };
+const smooth: SigmoidParams = {
+  ...reinhard,
+  middle_grey_contrast: 1.5, contrast_skewness: -0.2, color_processing: 0, hue_preservation: 0,
+  red_inset: 0.1, green_inset: 0.1, blue_inset: 0.15,
+  red_rotation: degf(2), green_rotation: degf(-1), blue_rotation: degf(-3),
+  purity: 0, base_primaries: 1,
+};
+
+export const SIGMOID_PRESETS: readonly { name: string; params: SigmoidParams }[] = [
+  { name: "neutral grey", params: neutralGray },
+  { name: "ACES 100-nit like", params: aces },
+  { name: "Reinhard", params: reinhard },
+  { name: "smooth", params: smooth },
 ];

@@ -1,14 +1,15 @@
 {
   "name": "safelight-parametric-tonemappers",
   "private": true,
-  "version": "1.0.1",
-  "description": "Parametric Tone Mappers for Safelight: AgX and filmic rgb display transforms with all of their sliders.",
+  "version": "1.1.0",
+  "description": "Parametric Tone Mappers for Safelight: AgX, filmic rgb and sigmoid display transforms with all of their sliders.",
   "type": "module",
   "scripts": {
     "build": "vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:gpu": "node test/gpu/run.cjs"
+    "test:gpu": "node test/gpu/run.cjs",
+    "reference:sigmoid": "node test/reference/sigmoid-build.mjs"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.2",

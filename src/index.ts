@@ -1,7 +1,8 @@
 // Parametric Tone Mappers, a Safelight extension. GPL-3.0-or-later. See LICENSE.
 //
-// Two display transforms with settings: darktable's AgX (agx/, from darktable
-// release-5.6.2) and Ansel's filmic rgb v8 (filmic/, from Ansel 2fadf8a366).
+// Three display transforms with settings: darktable's AgX (agx/) and sigmoid
+// (sigmoid/), both from darktable release-5.6.2, and Ansel's filmic rgb v8
+// (filmic/, from Ansel 2fadf8a366).
 // The core runs their derive functions on the main thread and binds the
 // results; their GLSL is per-pixel. The Tone mapper panel (panel/) edits the
 // settings of the one the open photo renders with.
@@ -11,11 +12,13 @@ import { filmicTransform } from "./filmic/transform";
 import { PANEL_TITLE, TonePanel, resetActive } from "./panel/Panel";
 import { initRuntime } from "./runtime";
 import type { SafelightAPI } from "./safelight";
+import { sigmoidTransform } from "./sigmoid/transform";
 
 export function activate(host: SafelightAPI): void {
   initRuntime(host);
   host.registerPipeline(agxTransform());
   host.registerPipeline(filmicTransform());
+  host.registerPipeline(sigmoidTransform());
   host.registerPanel({
     id: "parametric-tonemappers.panel",
     title: PANEL_TITLE,
