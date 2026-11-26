@@ -3092,6 +3092,7 @@ function br(e) {
 			order: 4,
 			width: 268
 		},
+		modules: ["develop"],
 		onReset: gr
 	});
 }

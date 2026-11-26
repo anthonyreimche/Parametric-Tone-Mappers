@@ -97,6 +97,8 @@ export interface PanelContribution {
   title: string;
   component: ComponentType;
   defaultDock?: { module: "develop"; direction: "right"; order?: number; width?: number };
+  /** The modules the panel may be docked in; omitted, every module (Safelight 3.2.8). */
+  modules?: readonly string[];
   onReset?: () => void;
 }
 
